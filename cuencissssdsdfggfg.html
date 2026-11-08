@@ -1,0 +1,1999 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#030303" />
+<title>CUENCI — Eliezer · Portafolio</title>
+<meta name="description" content="Portafolio de Eliezer — diseñador frontend y de IA independiente. Construyo cualquier habitación… y si hay una barrera de por medio, la rompo." />
+
+<!-- Preconnect CDN -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="preconnect" href="https://cdnjs.cloudflare" crossorigin />
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts (Fontsource CDN) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.1.0/400.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.1.0/500.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5.1.0/700.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/400.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/500.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.1.0/600.css" />
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          display: ['"Space Grotesk"', 'Inter', 'sans-serif'],
+        },
+        colors: { void: '#030303', neon: '#6366f1' },
+      },
+    },
+  };
+</script>
+
+<style>
+  /* ============ BASE ============ */
+  :root { --ease-apple: cubic-bezier(0.16, 1, 0.3, 1); }
+  * { -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { background:#030303; color:rgba(255,255,255,0.85); font-family:'Inter',sans-serif; overflow-x:hidden; overscroll-behavior-y:none; }
+  body.room-open { overflow:hidden; }
+  ::selection { background:rgba(99,102,241,0.45); color:#fff; }
+  :focus-visible { outline:2px solid rgba(129,140,248,0.75); outline-offset:3px; border-radius:6px; }
+  ::-webkit-scrollbar { width:10px; height:10px; }
+  ::-webkit-scrollbar-track { background:#030303; }
+  ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:8px; border:2px solid #030303; }
+  ::-webkit-scrollbar-thumb:hover { background:rgba(255,255,255,0.22); }
+
+  #veil { position:fixed; inset:0; z-index:200; background:#030303; transition:opacity 0.8s var(--ease-apple); }
+  #veil.veil-out { opacity:0; pointer-events:none; }
+
+  #scrollProgress { position:fixed; top:0; left:0; right:0; height:2px; z-index:60; transform-origin:left; transform:scaleX(0);
+    background:linear-gradient(90deg,#6366f1,#38bdf8,#e879f9); box-shadow:0 0 12px rgba(99,102,241,0.6); pointer-events:none; }
+
+  /* ============ GLASSMORPHISM ============ */
+  .glass-card {
+    background: rgba(255,255,255,0.03);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.65), 0 8px 24px -12px rgba(0,0,0,0.5);
+    transition: transform 0.4s var(--ease-apple), border-color 0.4s var(--ease-apple), background 0.4s var(--ease-apple), box-shadow 0.4s var(--ease-apple);
+  }
+  .glass-card-hover:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 32px 70px -18px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.04), 0 0 40px -10px rgba(99,102,241,0.15);
+  }
+  .glass-mini {
+    background: rgba(255,255,255,0.05);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.4s var(--ease-apple);
+  }
+  .glass-mini:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.09); }
+  .card-sheen { position: relative; }
+  .card-sheen::after {
+    content:''; position:absolute; top:0; left:10%; right:10%; height:1px; border-radius:2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    pointer-events:none;
+  }
+  .spotlight::before {
+    content:''; position:absolute; inset:0; border-radius:inherit; opacity:0; pointer-events:none; z-index:1;
+    transition:opacity 0.5s var(--ease-apple);
+    background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%), rgba(129,140,248,0.11), rgba(56,189,248,0.05) 45%, transparent 68%);
+  }
+  .spotlight:hover::before { opacity:1; }
+
+  /* ============ ORBES + FONDO ============ */
+  .orb { position:fixed; border-radius:9999px; filter:blur(90px); pointer-events:none; z-index:0; will-change:transform; }
+  .orb-purple { width:46rem; height:46rem; background:radial-gradient(circle at center, rgba(99,102,241,0.10) 0%, rgba(99,102,241,0.05) 45%, transparent 70%); top:-14rem; left:-12rem; animation:orbFloat1 26s ease-in-out infinite alternate; }
+  .orb-blue { width:40rem; height:40rem; background:radial-gradient(circle at center, rgba(56,189,248,0.10) 0%, rgba(56,189,248,0.045) 45%, transparent 70%); bottom:-12rem; right:-10rem; animation:orbFloat2 32s ease-in-out infinite alternate; }
+  .orb-mid { width:30rem; height:30rem; background:radial-gradient(circle at center, rgba(139,92,246,0.08) 0%, transparent 65%); top:42%; left:55%; animation:orbFloat1 38s ease-in-out infinite alternate-reverse; }
+  @keyframes orbFloat1 { from{transform:translate3d(0,0,0);} to{transform:translate3d(5rem,3.5rem,0);} }
+  @keyframes orbFloat2 { from{transform:translate3d(0,0,0);} to{transform:translate3d(-4.5rem,-3rem,0);} }
+
+  #cursorGlow {
+    position:fixed; width:620px; height:620px; border-radius:9999px; pointer-events:none; z-index:1;
+    transform:translate(-50%,-50%); opacity:0; transition:opacity 0.8s var(--ease-apple);
+    background:radial-gradient(circle, rgba(99,102,241,0.075), rgba(56,189,248,0.03) 40%, transparent 62%);
+    will-change:left,top;
+  }
+  .grid-horizon { position:absolute; left:-30%; right:-30%; bottom:-2px; height:36vh; perspective:320px; overflow:hidden; pointer-events:none;
+    mask-image:linear-gradient(to top, #000 0%, transparent 88%); -webkit-mask-image:linear-gradient(to top, #000 0%, transparent 88%); }
+  .grid-horizon-inner { position:absolute; inset:-60% -10% 0 -10%;
+    background-image:linear-gradient(rgba(99,102,241,0.16) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.16) 1px, transparent 1px);
+    background-size:64px 64px; transform:rotateX(64deg); transform-origin:top center; animation:gridFlow 8s linear infinite; }
+  @keyframes gridFlow { from{background-position:0 0;} to{background-position:0 64px;} }
+
+  .shimmer { position:relative; overflow:hidden; }
+  .shimmer::after { content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.14) 50%, transparent 58%);
+    transform:translateX(-110%); animation:shimmerMove 4.8s ease-in-out 1.4s infinite; }
+  @keyframes shimmerMove { 0%{transform:translateX(-110%);} 55%{transform:translateX(110%);} 100%{transform:translateX(110%);} }
+
+  /* ============ ENTRADA ============ */
+  @keyframes fadeSlideUp { from{opacity:0; transform:translateY(28px);} to{opacity:1; transform:none;} }
+  .reveal { opacity:0; animation:fadeSlideUp 1.2s var(--ease-apple) both; animation-play-state:paused; }
+  .reveal.is-visible { animation-play-state:running; }
+  .hero-anim { opacity:0; animation:fadeSlideUp 1.2s var(--ease-apple) both; }
+  .reveal-clip { clip-path:inset(0 0 105% 0); transition:clip-path 1.15s var(--ease-apple) 0.15s; }
+  .reveal.is-visible .reveal-clip { clip-path:inset(0 0 -12% 0); }
+
+  /* ============ TEXTO ============ */
+  .text-gradient-hero { background:linear-gradient(115deg,#ffffff 0%,#e0e7ff 30%,#a5b4fc 55%,#818cf8 75%,#6366f1 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .text-gradient-silver { background:linear-gradient(180deg,#ffffff 0%,#e5e7eb 45%,#9ca3af 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .wordmark-ghost { background-image:linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.008) 75%, transparent); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  /* ============ BOTONES ============ */
+  .btn-solid { background:#fff; color:#030303; transition:transform 0.4s var(--ease-apple), box-shadow 0.4s var(--ease-apple); box-shadow:0 8px 30px -8px rgba(255,255,255,0.25); }
+  .btn-solid:hover { transform:translateY(-3px); box-shadow:0 14px 44px -8px rgba(255,255,255,0.35), 0 0 30px -6px rgba(99,102,241,0.4); }
+  .btn-solid:active { transform:translateY(-1px) scale(0.985); }
+  .btn-glass { background:rgba(255,255,255,0.04); -webkit-backdrop-filter:blur(20px) saturate(160%); backdrop-filter:blur(20px) saturate(160%); border:1px solid rgba(255,255,255,0.12); color:#fff; transition:all 0.4s var(--ease-apple); }
+  .btn-glass:hover { transform:translateY(-3px); border-color:rgba(255,255,255,0.28); background:rgba(255,255,255,0.07); box-shadow:0 14px 40px -12px rgba(0,0,0,0.7), 0 0 24px -8px rgba(99,102,241,0.35); }
+  .btn-glass:active { transform:translateY(-1px) scale(0.985); }
+  .nav-link { position:relative; color:rgba(255,255,255,0.55); transition:color 0.3s var(--ease-apple); }
+  .nav-link::after { content:''; position:absolute; left:0; bottom:-4px; width:100%; height:1px; background:linear-gradient(90deg,#6366f1,#38bdf8); transform:scaleX(0); transform-origin:left; transition:transform 0.4s var(--ease-apple); }
+  .nav-link:hover,.nav-link.active { color:#fff; }
+  .nav-link:hover::after,.nav-link.active::after { transform:scaleX(1); }
+
+  /* ============ LIQUID GLASS TAB BAR (spec exacta Vanta — no tocar) ============ */
+  .gg-glass {
+    position:relative; box-sizing:border-box;
+    width:520px; height:56px; border-radius:26.4px;
+    background:rgba(255,255,255,0.255);
+    -webkit-backdrop-filter:blur(1.6px) saturate(1.032);
+    backdrop-filter:blur(1.6px) saturate(1.032);
+    border:1px solid rgba(255,255,255,0.216);
+    box-shadow:0 12px 32px rgba(0,0,0,0.245);
+    isolation:isolate; flex-shrink:0;
+  }
+  .gg-glass::before {
+    content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.31), rgba(255,255,255,0.031) 40%, rgba(0,0,0,0.217));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite:exclude;
+    pointer-events:none; z-index:2;
+  }
+  .gg-shine {
+    position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(210deg, rgba(255,255,255,0.408) 0%, rgba(255,255,255,0) 45%);
+    box-shadow:inset -0.5px 0.866px 0 rgba(255,255,255,0.34);
+    pointer-events:none; z-index:3;
+  }
+  @supports (background: paint(gg-glass-probe)) {
+    .gg-glass {
+      -webkit-backdrop-filter:url(#gg-glass-filter) blur(1.6px) saturate(1.032);
+      backdrop-filter:url(#gg-glass-filter) blur(1.6px) saturate(1.032);
+    }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .gg-glass { -webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(255,255,255,0.92); }
+  }
+  .gg-tab { position:relative; z-index:4; height:40px; padding:0 1.6rem; border-radius:9999px; font-size:0.82rem; font-weight:600; letter-spacing:0.02em; color:rgba(10,10,18,0.62); transition:color 0.4s var(--ease-apple); white-space:nowrap; }
+  .gg-tab[aria-selected="true"] { color:#0b0b14; }
+  .gg-indicator { position:absolute; z-index:1; top:50%; left:0; height:40px; border-radius:9999px; background:rgba(255,255,255,0.55); box-shadow:0 2px 10px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.7); transform:translate(0,-50%); transition:transform 0.55s var(--ease-apple), width 0.55s var(--ease-apple); pointer-events:none; }
+  .gg-scroll-x { overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; }
+  .gg-scroll-x::-webkit-scrollbar { display:none; }
+  .gg-backdrop-panel {
+    position:absolute; inset:0; border-radius:inherit; z-index:0;
+    background:
+      radial-gradient(45% 120% at 12% 20%, rgba(99,102,241,0.85) 0%, transparent 60%),
+      radial-gradient(50% 130% at 88% 80%, rgba(56,189,248,0.75) 0%, transparent 60%),
+      radial-gradient(40% 100% at 70% 10%, rgba(217,70,239,0.55) 0%, transparent 60%),
+      radial-gradient(60% 140% at 35% 95%, rgba(139,92,246,0.7) 0%, transparent 65%),
+      linear-gradient(115deg,#1e1b4b 0%,#0f172a 50%,#172554 100%);
+  }
+  .gg-backdrop-panel::after { content:""; position:absolute; inset:0; border-radius:inherit; background-image:repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 22px), repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 22px); mix-blend-mode:overlay; }
+
+  /* ============ BENTO ============ */
+  .bento-item { transition:opacity 0.5s var(--ease-apple), transform 0.5s var(--ease-apple); cursor:pointer; outline:none; }
+  .bento-item:focus-visible { border-color:rgba(129,140,248,0.6); box-shadow:0 0 0 3px rgba(99,102,241,0.25), 0 32px 70px -18px rgba(0,0,0,0.75); }
+  .bento-item.filtered-out { opacity:0; transform:scale(0.96); pointer-events:none; position:absolute; visibility:hidden; }
+  .room-hint { display:inline-flex; align-items:center; gap:0.5rem; font-size:0.72rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.4); transition:color 0.4s var(--ease-apple); }
+  .room-hint svg { transition:transform 0.4s var(--ease-apple); }
+  .bento-item:hover .room-hint, .bento-item:focus-visible .room-hint { color:#a5b4fc; }
+  .bento-item:hover .room-hint svg { transform:translateX(4px); }
+  .chip { display:inline-flex; align-items:center; gap:0.4rem; padding:0.4rem 0.8rem; border-radius:9999px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); font-size:0.72rem; font-weight:500; color:rgba(255,255,255,0.7); transition:all 0.4s var(--ease-apple); }
+  .chip:hover { border-color:rgba(255,255,255,0.28); background:rgba(255,255,255,0.08); color:#fff; transform:translateY(-2px); }
+  .skill-bar { height:4px; border-radius:9999px; background:rgba(255,255,255,0.08); overflow:hidden; }
+  .skill-fill { height:100%; width:0%; border-radius:9999px; background:linear-gradient(90deg,#6366f1,#38bdf8); transition:width 1.4s var(--ease-apple); box-shadow:0 0 12px rgba(99,102,241,0.6); }
+  .status-dot { width:8px; height:8px; border-radius:9999px; background:#34d399; box-shadow:0 0 0 0 rgba(52,211,153,0.6); animation:pulseDot 2.2s infinite; }
+  @keyframes pulseDot { 0%{box-shadow:0 0 0 0 rgba(52,211,153,0.55);} 70%{box-shadow:0 0 0 9px rgba(52,211,153,0);} 100%{box-shadow:0 0 0 0 rgba(52,211,153,0);} }
+  .art-lab { background:radial-gradient(50% 80% at 50% 30%, rgba(217,70,239,0.35) 0%, transparent 60%), radial-gradient(70% 100% at 30% 90%, rgba(99,102,241,0.4) 0%, transparent 60%), linear-gradient(180deg,#0a0716 0%,#120f24 100%); }
+  .art-neural { background:radial-gradient(65% 95% at 30% 15%, rgba(79,70,229,0.4) 0%, transparent 60%), radial-gradient(55% 85% at 85% 85%, rgba(34,211,238,0.28) 0%, transparent 60%), linear-gradient(155deg,#05070f 0%,#0c1022 60%,#0a0e1e 100%); }
+  .art-swarm { background:radial-gradient(60% 90% at 75% 20%, rgba(34,211,238,0.32) 0%, transparent 60%), radial-gradient(55% 85% at 20% 85%, rgba(139,92,246,0.35) 0%, transparent 60%), linear-gradient(165deg,#04070d 0%,#0a1220 60%,#081019 100%); }
+  .grid-lines { background-image:linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size:28px 28px; mask-image:radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); -webkit-mask-image:radial-gradient(70% 70% at 50% 40%, #000 30%, transparent 100%); }
+  .float-slow { animation:floatY 7s ease-in-out infinite alternate; }
+  .float-slower { animation:floatY 10s ease-in-out infinite alternate-reverse; }
+  @keyframes floatY { from{transform:translateY(-6px);} to{transform:translateY(8px);} }
+  .social-btn { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:9999px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.65); transition:all 0.4s var(--ease-apple); }
+  .social-btn:hover { color:#fff; border-color:rgba(255,255,255,0.3); background:rgba(99,102,241,0.18); transform:translateY(-3px); box-shadow:0 10px 24px -8px rgba(99,102,241,0.5); }
+  .tier-badge { font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; padding:0.3rem 0.7rem; border-radius:9999px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.55); }
+
+  .nn-line { stroke:rgba(129,140,248,0.45); stroke-width:1; stroke-dasharray:4 7; animation:dashFlow 1.6s linear infinite; }
+  .sw-line { stroke:rgba(56,189,248,0.4); stroke-width:1; stroke-dasharray:3 8; animation:dashFlow 2.2s linear infinite; }
+  @keyframes dashFlow { to { stroke-dashoffset:-22; } }
+  .nn-node { fill:#c7d2fe; filter:drop-shadow(0 0 5px rgba(129,140,248,0.9)); animation:nodePulse 2.4s ease-in-out infinite; }
+  .sw-node { fill:#a5f3fc; filter:drop-shadow(0 0 5px rgba(56,189,248,0.9)); animation:nodePulse 2s ease-in-out infinite; }
+  @keyframes nodePulse { 0%,100%{opacity:.6;} 50%{opacity:1;} }
+
+  /* ============ MONOGRAMA "E" — TIPOGRAFÍA MORADA ============ */
+  .persp { perspective:1500px; }
+  .e-tilt { transition:transform 0.7s var(--ease-apple); will-change:transform; }
+  .e-stage {
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    width:min(420px, 88vw);
+    min-height:clamp(320px, 46vh, 420px);
+    margin-inline:auto;
+  }
+  /* halo morado detrás */
+  .e-stage::before {
+    content:''; position:absolute; inset:-12%;
+    background:radial-gradient(circle at 50% 48%, rgba(139,92,246,0.30), rgba(109,40,217,0.14) 42%, transparent 70%);
+    filter:blur(36px);
+    pointer-events:none;
+  }
+  /* anillo orbital girando */
+  .e-ring {
+    position:absolute; width:min(360px, 78vw); aspect-ratio:1; border-radius:9999px;
+    border:1px dashed rgba(167,139,250,0.28);
+    animation:ringSpin 26s linear infinite;
+    pointer-events:none;
+  }
+  .e-ring::after {
+    content:''; position:absolute; top:-5px; left:50%; width:10px; height:10px; border-radius:9999px;
+    background:#c4b5fd; box-shadow:0 0 14px rgba(196,181,253,0.9), 0 0 34px rgba(139,92,246,0.6);
+  }
+  @keyframes ringSpin { to { transform:rotate(360deg); } }
+  .e-mark {
+    position:relative;
+    font-family:'Space Grotesk', Inter, sans-serif;
+    font-weight:700;
+    line-height:0.9;
+    font-size:clamp(13rem, 32vw, 21rem);
+    letter-spacing:-0.02em;
+    user-select:none;
+    background:linear-gradient(160deg, #f5f3ff 0%, #c4b5fd 28%, #8b5cf6 58%, #6d28d9 88%, #4c1d95 100%);
+    background-size:220% 220%;
+    background-position:0% 0%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    filter:drop-shadow(0 0 30px rgba(139,92,246,0.42)) drop-shadow(0 14px 60px rgba(109,40,217,0.35));
+    opacity:0;
+    transform:translateY(26px) scale(0.9);
+    transition:opacity 1s var(--ease-apple) 0.15s, transform 1s var(--ease-apple) 0.15s;
+    animation:eFloat 8s ease-in-out 1.6s infinite alternate, eSheen 7s ease-in-out 2.2s infinite;
+  }
+  .e-stage.e-visible .e-mark { opacity:1; transform:none; }
+  @keyframes eFloat { from{translate:0 -5px;} to{translate:0 7px;} }
+  @keyframes eSheen { 0%,100%{background-position:0% 0%;} 50%{background-position:100% 100%;} }
+  .e-stage:hover .e-mark {
+    filter:drop-shadow(0 0 40px rgba(167,139,250,0.6)) drop-shadow(0 16px 70px rgba(109,40,217,0.45));
+  }
+
+  /* ============ ROOMS ============ */
+  #roomOverlay { opacity:0; transition:opacity 0.55s var(--ease-apple); }
+  #roomOverlay.open { opacity:1; }
+  .room-backdrop { position:absolute; inset:0; background:rgba(3,3,3,0.8); -webkit-backdrop-filter:blur(32px) saturate(140%); backdrop-filter:blur(32px) saturate(140%); }
+  .room-panel { animation:fadeSlideUp 0.9s var(--ease-apple) both; }
+  .stagger-kids > * { opacity:0; animation:fadeSlideUp 0.85s var(--ease-apple) both; }
+  .stagger-kids > *:nth-child(1){animation-delay:.06s} .stagger-kids > *:nth-child(2){animation-delay:.14s}
+  .stagger-kids > *:nth-child(3){animation-delay:.22s} .stagger-kids > *:nth-child(4){animation-delay:.30s}
+  .stagger-kids > *:nth-child(5){animation-delay:.38s} .stagger-kids > *:nth-child(6){animation-delay:.46s}
+  .stagger-kids > *:nth-child(7){animation-delay:.54s} .stagger-kids > *:nth-child(8){animation-delay:.62s}
+  .room-ambient { position:absolute; inset:0; pointer-events:none; border-radius:inherit; }
+  .tool-btn { padding:0.55rem 1rem; border-radius:9999px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); color:rgba(255,255,255,0.8); font-size:0.75rem; font-weight:600; transition:all 0.35s var(--ease-apple); white-space:nowrap; }
+  .tool-btn:hover { border-color:rgba(255,255,255,0.3); background:rgba(99,102,241,0.2); color:#fff; transform:translateY(-2px); box-shadow:0 8px 20px -6px rgba(99,102,241,0.4); }
+  .tool-btn:active { transform:translateY(0) scale(0.97); }
+  .tool-btn.active-tool { border-color:rgba(129,140,248,0.6); background:rgba(99,102,241,0.25); color:#fff; }
+  .icon-round { display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:9999px; border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05); -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px); color:rgba(255,255,255,0.75); transition:all 0.35s var(--ease-apple); }
+  .icon-round:hover { color:#fff; border-color:rgba(255,255,255,0.32); background:rgba(255,255,255,0.1); transform:translateY(-2px); }
+  .icon-round:active { transform:scale(0.94); }
+  .stat-tile { border-radius:1.25rem; padding:1rem; text-align:center; }
+  .slider-label { display:flex; flex-direction:column; gap:0.4rem; font-size:0.68rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.5); }
+  input[type="range"].vol-slider { -webkit-appearance:none; appearance:none; height:4px; border-radius:9999px; background:rgba(255,255,255,0.15); outline:none; cursor:pointer; }
+  input[type="range"].vol-slider::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:13px; height:13px; border-radius:9999px; background:#fff; box-shadow:0 0 10px rgba(129,140,248,0.8); transition:transform .25s var(--ease-apple); }
+  input[type="range"].vol-slider::-webkit-slider-thumb:hover { transform:scale(1.25); }
+  input[type="range"].vol-slider::-moz-range-thumb { width:13px; height:13px; border:none; border-radius:9999px; background:#fff; }
+
+  #prismaCanvas, #neuralCanvas, #swarmCanvas { display:block; width:100%; height:100%; touch-action:none; }
+  #prismaCanvas { cursor:grab; }
+  #prismaCanvas:active { cursor:grabbing; }
+  #swarmCanvas { cursor:crosshair; }
+  .canvas-shell { position:relative; border-radius:1.6rem; overflow:hidden; border:1px solid rgba(255,255,255,0.1); box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 30px 80px -30px rgba(0,0,0,0.8); }
+  #roomScroll { overscroll-behavior:contain; }
+
+  #toTop { position:fixed; bottom:1.5rem; right:1.5rem; z-index:40; opacity:0; pointer-events:none; transform:translateY(12px); transition:all 0.5s var(--ease-apple); }
+  #toTop.show { opacity:1; pointer-events:auto; transform:translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior:auto; }
+    .orb,.float-slow,.float-slower,.status-dot,.nn-line,.nn-node,.sw-line,.sw-node,.grid-horizon-inner,.shimmer::after,.e-mark,.e-ring { animation:none !important; }
+    .reveal,.hero-anim,.room-panel,.stagger-kids > * { animation-duration:0.01s !important; }
+    .e-mark { transition-duration:0.01s !important; opacity:1 !important; transform:none !important; }
+  }
+</style>
+</head>
+
+<body class="font-sans antialiased">
+
+  <div id="veil" aria-hidden="true"></div>
+  <div id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- SVG FILTER — LIVE inline (spec exacta de la tool, no modificar) -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <filter id="gg-glass-filter" color-interpolation-filters="sRGB" x="0" y="0" width="520" height="56" filterUnits="userSpaceOnUse" primitiveUnits="userSpaceOnUse">
+      <feImage href="data:image/png;base64,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" x="0" y="0" width="520" height="56" result="gg-map"/>
+      <feDisplacementMap in="SourceGraphic" in2="gg-map" scale="-21.165" xChannelSelector="R" yChannelSelector="G" result="gg-dr"/>
+      <feColorMatrix in="gg-dr" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="gg-cr"/>
+      <feDisplacementMap in="SourceGraphic" in2="gg-map" scale="-21.646" xChannelSelector="R" yChannelSelector="G" result="gg-dg"/>
+      <feColorMatrix in="gg-dg" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="gg-cg"/>
+      <feDisplacementMap in="SourceGraphic" in2="gg-map" scale="-22.126" xChannelSelector="R" yChannelSelector="G" result="gg-db"/>
+      <feColorMatrix in="gg-db" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="gg-cb"/>
+      <feComposite in="gg-cr" in2="gg-cg" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="gg-rg"/>
+      <feComposite in="gg-rg" in2="gg-cb" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+    </filter>
+    </defs>
+  </svg>
+
+  <!-- Fondo -->
+  <canvas id="starfield" class="fixed inset-0 z-0 pointer-events-none" aria-hidden="true"></canvas>
+  <div class="orb orb-purple" aria-hidden="true"></div>
+  <div class="orb orb-blue" aria-hidden="true"></div>
+  <div class="orb orb-mid" aria-hidden="true"></div>
+  <div id="cursorGlow" aria-hidden="true"></div>
+  <div class="fixed inset-0 z-0 pointer-events-none opacity-[0.035]" aria-hidden="true"
+       style="background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22/%3E%3C/filter%3E%3Crect width=%22120%22 height=%22120%22 filter=%22url(%23n)%22 opacity=%221%22/%3E%3C/svg%3E');"></div>
+
+  <!-- HEADER -->
+  <header class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
+    <nav class="glass-card card-sheen !rounded-full hero-anim flex items-center justify-between px-5 sm:px-7 py-3" style="animation-delay:0.05s;" aria-label="Navegación principal">
+      <a href="#inicio" class="font-display text-lg sm:text-xl font-bold tracking-[0.22em] text-gradient-silver select-none">CUENCI</a>
+      <div class="hidden md:flex items-center gap-7 text-[0.82rem] font-medium">
+        <a href="#inicio" class="nav-link active" data-nav>Inicio</a>
+        <a href="#trabajo" class="nav-link" data-nav>Habitaciones</a>
+        <a href="#sobre-mi" class="nav-link" data-nav>Sobre mí</a>
+        <a href="#contacto" class="nav-link" data-nav>Contacto</a>
+      </div>
+      <a href="#contacto" class="btn-glass text-[0.78rem] font-semibold px-4 sm:px-5 py-2 rounded-full">Hablemos</a>
+    </nav>
+  </header>
+
+  <main class="relative z-10">
+
+    <!-- HERO -->
+    <section id="inicio" class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-32 pb-20 scroll-mt-28 overflow-hidden">
+      <div class="grid-horizon" aria-hidden="true"><div class="grid-horizon-inner"></div></div>
+
+      <div class="hero-anim shimmer inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.04] backdrop-blur-xl mb-8" style="animation-delay:0.1s;">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="text-[0.72rem] font-medium tracking-[0.14em] uppercase text-white/60">Sin barreras · Disponible para proyectos</span>
+      </div>
+      <p class="hero-anim font-display text-white/50 text-lg sm:text-2xl tracking-[0.3em] uppercase mb-4" style="animation-delay:0.22s;">Hola, soy</p>
+      <h1 class="hero-anim font-display font-bold leading-[0.95] tracking-tight text-6xl sm:text-8xl lg:text-[9.5rem] text-gradient-hero" style="animation-delay:0.34s;">Eliezer</h1>
+      <p class="hero-anim mt-8 max-w-2xl text-base sm:text-lg leading-relaxed text-white/55" style="animation-delay:0.46s;">
+        Diseñador <span class="text-white/90 font-medium">frontend y de IA</span> independiente.
+        Construyo <span class="text-white font-medium">cualquier habitación</span> —una red neuronal que respira,
+        un enjambre autónomo, un lab de físicas jugable— y si hay una barrera de por medio…
+        <span class="text-gradient-hero font-semibold">la rompo</span>.
+      </p>
+      <div class="hero-anim mt-10 flex flex-col sm:flex-row items-center gap-4" style="animation-delay:0.58s;">
+        <a href="#trabajo" class="btn-solid rounded-full px-8 py-3.5 text-sm font-semibold">Entrar a las rooms</a>
+        <a href="#sobre-mi" class="btn-glass rounded-full px-8 py-3.5 text-sm font-semibold">Conóceme</a>
+      </div>
+      <div class="hero-anim mt-20 grid grid-cols-3 gap-6 sm:gap-14" style="animation-delay:0.72s;">
+        <div class="text-center">
+          <p class="font-display text-2xl sm:text-4xl font-bold text-white" data-count="1" data-suffix="">0</p>
+          <p class="mt-1 text-[0.68rem] sm:text-xs uppercase tracking-[0.18em] text-white/40">Año de experiencia</p>
+        </div>
+        <div class="text-center border-x border-white/10 px-6 sm:px-14">
+          <p class="font-display text-2xl sm:text-4xl font-bold text-white" data-count="5" data-suffix="">0</p>
+          <p class="mt-1 text-[0.68rem] sm:text-xs uppercase tracking-[0.18em] text-white/40">Habitaciones</p>
+        </div>
+        <div class="text-center">
+          <p class="font-display text-2xl sm:text-4xl font-bold text-white" data-count="0" data-suffix="">0</p>
+          <p class="mt-1 text-[0.68rem] sm:text-xs uppercase tracking-[0.18em] text-white/40">Barreras intactas</p>
+        </div>
+      </div>
+      <a href="#trabajo" class="hero-anim mt-16 text-white/30 hover:text-white/70 transition-colors duration-500" style="animation-delay:0.85s;" aria-label="Desplazarse al contenido">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="animate-bounce"><path d="M12 5v14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </section>
+
+    <div class="max-w-4xl mx-auto" aria-hidden="true" style="height:1px; background:linear-gradient(90deg,transparent,rgba(99,102,241,0.55),rgba(56,189,248,0.4),transparent);"></div>
+
+    <!-- TRABAJO -->
+    <section id="trabajo" class="max-w-6xl mx-auto px-6 pt-20 pb-24 scroll-mt-28">
+      <div class="reveal" data-reveal>
+        <p class="font-display text-xs tracking-[0.32em] uppercase text-neon/80 mb-3 flex items-center gap-3">
+          <span class="inline-block w-8 h-px bg-gradient-to-r from-neon to-sky-400"></span>01 · Habitaciones
+        </p>
+        <h2 class="reveal-clip font-display text-3xl sm:text-5xl font-bold text-white tracking-tight">Cualquier habitación, <span class="text-gradient-hero">cualquier reto</span></h2>
+        <p class="mt-4 max-w-xl text-white/50 text-sm sm:text-base leading-relaxed">
+          Entra en el visualizador de redes neuronales en tiempo real, observa al enjambre de agentes
+          autónomos organizarse solo o rompe la gravedad en el laboratorio de físicas. Filtra con la barra de vidrio líquido.
+        </p>
+      </div>
+
+      <!-- LIQUID GLASS TAB BAR -->
+      <div class="reveal mt-12" data-reveal style="animation-delay:0.12s;">
+        <div class="relative rounded-[2rem] overflow-hidden p-8 sm:p-14 flex flex-col items-center">
+          <div class="gg-backdrop-panel" aria-hidden="true"></div>
+          <div class="gg-scroll-x relative z-10 w-full max-w-full flex justify-start sm:justify-center">
+            <div class="gg-glass flex items-center px-2" id="ggTabBar" role="tablist" aria-label="Filtrar habitaciones">
+              <span class="gg-shine" aria-hidden="true"></span>
+              <div class="gg-indicator" id="ggIndicator" aria-hidden="true"></div>
+              <button class="gg-tab" role="tab" data-filter="all" aria-selected="true">Todas</button>
+              <button class="gg-tab" role="tab" data-filter="ia" aria-selected="false">IA</button>
+              <button class="gg-tab" role="tab" data-filter="fisica" aria-selected="false">Física</button>
+            </div>
+          </div>
+          <p class="relative z-10 mt-5 tier-badge" id="ggTierBadge">Detectando motor de render…</p>
+        </div>
+      </div>
+
+      <!-- BENTO GRID -->
+      <div id="bentoGrid" class="reveal grid grid-cols-1 md:grid-cols-6 gap-5 mt-14 relative" data-reveal style="animation-delay:0.2s;">
+
+        <!-- NEURAL -->
+        <article class="bento-item spotlight glass-card card-sheen glass-card-hover md:col-span-4 overflow-hidden group" data-cat="ia" data-room-open="neural" tabindex="0" role="button" aria-label="Entrar al Visualizador de Redes Neuronales en Tiempo Real">
+          <div class="art-neural relative h-56 sm:h-64 overflow-hidden transition-transform duration-700 group-hover:scale-[1.04]" style="transition-timing-function:var(--ease-apple);">
+            <div class="absolute inset-0 grid-lines opacity-70"></div>
+            <svg viewBox="0 0 640 240" class="absolute inset-0 w-full h-full" aria-hidden="true">
+              <g>
+                <line class="nn-line" x1="120" y1="60"  x2="270" y2="40"/>
+                <line class="nn-line" x1="120" y1="60"  x2="270" y2="100" style="animation-delay:.2s"/>
+                <line class="nn-line" x1="120" y1="120" x2="270" y2="100" style="animation-delay:.4s"/>
+                <line class="nn-line" x1="120" y1="120" x2="270" y2="160" style="animation-delay:.1s"/>
+                <line class="nn-line" x1="120" y1="180" x2="270" y2="160" style="animation-delay:.5s"/>
+                <line class="nn-line" x1="120" y1="180" x2="270" y2="200" style="animation-delay:.3s"/>
+                <line class="nn-line" x1="270" y1="40"  x2="400" y2="80"  style="animation-delay:.15s"/>
+                <line class="nn-line" x1="270" y1="100" x2="400" y2="80"  style="animation-delay:.45s"/>
+                <line class="nn-line" x1="270" y1="100" x2="400" y2="140" style="animation-delay:.25s"/>
+                <line class="nn-line" x1="270" y1="160" x2="400" y2="140" style="animation-delay:.55s"/>
+                <line class="nn-line" x1="270" y1="200" x2="400" y2="180" style="animation-delay:.35s"/>
+                <line class="nn-line" x1="400" y1="80"  x2="530" y2="110" style="animation-delay:.2s"/>
+                <line class="nn-line" x1="400" y1="140" x2="530" y2="110" style="animation-delay:.5s"/>
+                <line class="nn-line" x1="400" y1="180" x2="530" y2="150" style="animation-delay:.3s"/>
+              </g>
+              <g>
+                <circle class="nn-node" cx="120" cy="60"  r="7" style="animation-delay:0s"/>
+                <circle class="nn-node" cx="120" cy="120" r="7" style="animation-delay:.4s"/>
+                <circle class="nn-node" cx="120" cy="180" r="7" style="animation-delay:.8s"/>
+                <circle class="nn-node" cx="270" cy="40"  r="6" style="animation-delay:.2s"/>
+                <circle class="nn-node" cx="270" cy="100" r="6" style="animation-delay:.6s"/>
+                <circle class="nn-node" cx="270" cy="160" r="6" style="animation-delay:1s"/>
+                <circle class="nn-node" cx="270" cy="200" r="6" style="animation-delay:1.4s"/>
+                <circle class="nn-node" cx="400" cy="80"  r="6" style="animation-delay:.3s"/>
+                <circle class="nn-node" cx="400" cy="140" r="6" style="animation-delay:.9s"/>
+                <circle class="nn-node" cx="400" cy="180" r="6" style="animation-delay:1.2s"/>
+                <circle class="nn-node" cx="530" cy="110" r="8" style="animation-delay:.5s; fill:#a5f3fc"/>
+                <circle class="nn-node" cx="530" cy="150" r="8" style="animation-delay:1.1s; fill:#a5f3fc"/>
+              </g>
+            </svg>
+            <div class="absolute top-5 left-6 tier-badge !border-indigo-300/30 !text-indigo-200/80">● EN VIVO</div>
+          </div>
+          <div class="relative z-2 p-7">
+            <div class="flex items-center justify-between gap-4">
+              <h3 class="font-display text-xl sm:text-2xl font-bold text-white">Visualizador de Redes Neuronales</h3>
+              <span class="text-[0.65rem] uppercase tracking-[0.16em] text-white/40 border border-white/10 rounded-full px-3 py-1 shrink-0">Tiempo real · 2025</span>
+            </div>
+            <p class="mt-3 text-sm text-white/50 leading-relaxed">Señales que viajan por la red en cascada: pesos, activaciones e inferencia dibujados a 60fps sobre canvas.</p>
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex flex-wrap gap-2"><span class="chip">Canvas 2D</span><span class="chip">TypeScript</span><span class="chip">Matemáticas</span></div>
+              <span class="room-hint">Entrar a la room <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- HABILIDADES -->
+        <aside id="habilidades" class="bento-item spotlight glass-card card-sheen glass-card-hover md:col-span-2 md:row-span-2 p-7 flex flex-col scroll-mt-28" data-room-open="skills" tabindex="0" role="button" aria-label="Entrar a la habitación de habilidades" data-always>
+          <p class="font-display text-xs tracking-[0.28em] uppercase text-neon/80 mb-1">Stack</p>
+          <h3 class="font-display text-2xl font-bold text-white mb-6">Habilidades técnicas</h3>
+          <div class="space-y-5 flex-1" id="skillList">
+            <div>
+              <div class="flex justify-between text-xs mb-2"><span class="text-white/75 font-medium">Frontend · React / TS</span><span class="text-white/40">95%</span></div>
+              <div class="skill-bar"><div class="skill-fill" data-width="95"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-2"><span class="text-white/75 font-medium">UI / UX Design</span><span class="text-white/40">90%</span></div>
+              <div class="skill-bar"><div class="skill-fill" data-width="90"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-2"><span class="text-white/75 font-medium">IA · n8n & Nodos</span><span class="text-white/40">88%</span></div>
+              <div class="skill-bar"><div class="skill-fill" data-width="88"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-2"><span class="text-white/75 font-medium">Motion & WebGL</span><span class="text-white/40">82%</span></div>
+              <div class="skill-bar"><div class="skill-fill" data-width="82"></div></div>
+            </div>
+          </div>
+          <div class="mt-8 pt-6 border-t border-white/[0.07] flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-2"><span class="chip">Figma</span><span class="chip">Three.js</span><span class="chip">n8n</span></div>
+            <span class="room-hint">Room <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </aside>
+
+        <!-- SWARM -->
+        <article class="bento-item spotlight glass-card card-sheen glass-card-hover md:col-span-2 overflow-hidden group" data-cat="ia" data-room-open="swarm" tabindex="0" role="button" aria-label="Entrar a la simulación de enjambre de agentes autónomos">
+          <div class="art-swarm relative h-44 overflow-hidden transition-transform duration-700 group-hover:scale-[1.05]" style="transition-timing-function:var(--ease-apple);">
+            <div class="absolute inset-0 grid-lines opacity-60"></div>
+            <svg viewBox="0 0 320 180" class="absolute inset-0 w-full h-full" aria-hidden="true">
+              <g>
+                <line class="sw-line" x1="60"  y1="50"  x2="130" y2="80"/>
+                <line class="sw-line" x1="130" y1="80"  x2="200" y2="45" style="animation-delay:.3s"/>
+                <line class="sw-line" x1="200" y1="45"  x2="262" y2="90" style="animation-delay:.6s"/>
+                <line class="sw-line" x1="130" y1="80"  x2="160" y2="135" style="animation-delay:.15s"/>
+                <line class="sw-line" x1="160" y1="135" x2="262" y2="90" style="animation-delay:.45s"/>
+                <line class="sw-line" x1="60"  y1="50"  x2="95"  y2="130" style="animation-delay:.75s"/>
+                <line class="sw-line" x1="95"  y1="130" x2="160" y2="135" style="animation-delay:.2s"/>
+              </g>
+              <g>
+                <circle class="sw-node" cx="60"  cy="50"  r="4.5" style="animation-delay:0s"/>
+                <circle class="sw-node" cx="130" cy="80"  r="5.5" style="animation-delay:.35s"/>
+                <circle class="sw-node" cx="200" cy="45"  r="4"   style="animation-delay:.7s"/>
+                <circle class="sw-node" cx="262" cy="90"  r="5"   style="animation-delay:1.05s"/>
+                <circle class="sw-node" cx="160" cy="135" r="4.5" style="animation-delay:1.4s"/>
+                <circle class="sw-node" cx="95"  cy="130" r="3.5" style="animation-delay:1.75s"/>
+              </g>
+            </svg>
+            <div class="absolute top-4 left-5 tier-badge !border-cyan-300/30 !text-cyan-200/80">● SIMULANDO</div>
+          </div>
+          <div class="relative z-2 p-6">
+            <h3 class="font-display text-lg font-bold text-white">Swarm Intelligence</h3>
+            <p class="mt-2 text-xs text-white/50 leading-relaxed">Enjambre de agentes autónomos: cohesión, alineación y separación emergiendo sin líder.</p>
+            <div class="mt-4 flex items-center justify-between gap-2">
+              <div class="flex flex-wrap gap-2"><span class="chip">Boids</span><span class="chip">Emergencia</span></div>
+              <span class="room-hint">Observar <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- PRISMA LAB -->
+        <article class="bento-item spotlight glass-card card-sheen glass-card-hover md:col-span-2 overflow-hidden group" data-cat="fisica" data-room-open="prisma" tabindex="0" role="button" aria-label="Entrar al laboratorio de físicas Prisma Lab">
+          <div class="art-lab relative h-44 flex items-center justify-center overflow-hidden transition-transform duration-700 group-hover:scale-[1.05]" style="transition-timing-function:var(--ease-apple);">
+            <div class="relative w-28 h-28 float-slow" aria-hidden="true">
+              <div class="absolute inset-0 rounded-full border border-fuchsia-300/30"></div>
+              <div class="absolute inset-3 rounded-full border border-indigo-300/30"></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-10 h-10 rounded-full" style="background:radial-gradient(circle at 32% 30%, rgba(255,255,255,0.9), rgba(244,114,182,0.55) 45%, rgba(99,102,241,0.2) 75%); box-shadow:0 0 36px rgba(217,70,239,0.5);"></div>
+              </div>
+              <div class="absolute top-1 right-2 w-4 h-4 rounded-full bg-sky-300/70" style="box-shadow:0 0 14px rgba(56,189,248,0.7);"></div>
+              <div class="absolute bottom-2 left-1 w-3 h-3 rounded-full bg-indigo-300/70" style="box-shadow:0 0 12px rgba(129,140,248,0.7);"></div>
+            </div>
+          </div>
+          <div class="relative z-2 p-6">
+            <h3 class="font-display text-lg font-bold text-white">Prisma Lab</h3>
+            <p class="mt-2 text-xs text-white/50 leading-relaxed">Experimentador de físicas: gravedad, colisiones y arrastre en tiempo real.</p>
+            <div class="mt-4 flex items-center justify-between gap-2">
+              <div class="flex flex-wrap gap-2"><span class="chip">Matter.js</span><span class="chip">Canvas</span></div>
+              <span class="room-hint">Jugar <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            </div>
+          </div>
+        </article>
+
+        <!-- ESTUDIO -->
+        <article class="bento-item spotlight glass-card card-sheen glass-card-hover md:col-span-6 p-7 flex flex-col sm:flex-row sm:items-center gap-6 group" data-room-open="estudio" tabindex="0" role="button" aria-label="Entrar a la habitación del estudio" data-always>
+          <div class="flex -space-x-3 shrink-0" aria-hidden="true">
+            <div class="w-12 h-12 rounded-full border border-white/15" style="background:linear-gradient(135deg,#6366f1,#38bdf8);"></div>
+            <div class="w-12 h-12 rounded-full border border-white/15" style="background:linear-gradient(135deg,#8b5cf6,#ec4899);"></div>
+            <div class="w-12 h-12 rounded-full border border-white/15 flex items-center justify-center text-[0.65rem] font-bold text-white/80 bg-white/[0.06] backdrop-blur-md">+9</div>
+          </div>
+          <div class="flex-1">
+            <h3 class="font-display text-lg font-bold text-white">El Estudio Cuenci</h3>
+            <p class="mt-1.5 text-sm text-white/50 leading-relaxed">Donde nacen las ideas: proceso, filosofía y cómo rompo barreras junto a startups y estudios creativos.</p>
+          </div>
+          <span class="room-hint shrink-0">Entrar <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </article>
+
+      </div>
+      <p id="emptyState" class="hidden text-center text-white/40 text-sm mt-10">No hay habitaciones en esta categoría… todavía.</p>
+    </section>
+
+    <!-- SOBRE MÍ -->
+    <section id="sobre-mi" class="max-w-6xl mx-auto px-6 pb-24 scroll-mt-28">
+      <div class="mb-20" aria-hidden="true" style="height:1px; background:linear-gradient(90deg,transparent,rgba(56,189,248,0.45),rgba(99,102,241,0.5),transparent);"></div>
+
+      <div class="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
+
+        <!-- Monograma E morado -->
+        <div class="reveal persp flex flex-col items-center" data-reveal>
+          <div class="e-tilt" id="eTilt">
+            <div class="e-stage" id="eStage" role="img" aria-label="Letra E morada, monograma de Eliezer">
+              <div class="e-ring" aria-hidden="true"></div>
+              <span class="e-mark" aria-hidden="true">E</span>
+            </div>
+          </div>
+
+          <div class="mt-10 flex items-center gap-3">
+            <span class="tier-badge">Monograma · Eliezer</span>
+            <span class="tier-badge !border-violet-300/30 !text-violet-200/80">◆ Morado</span>
+          </div>
+        </div>
+
+        <div class="reveal" data-reveal style="animation-delay:0.12s;">
+          <p class="font-display text-xs tracking-[0.32em] uppercase text-neon/80 mb-3 flex items-center gap-3">
+            <span class="inline-block w-8 h-px bg-gradient-to-r from-neon to-sky-400"></span>02 · Sobre mí
+          </p>
+          <h2 class="reveal-clip font-display text-4xl sm:text-6xl font-bold text-white tracking-tight leading-[1.02]">
+            Hola, soy <span class="text-gradient-hero">Eliezer</span>.
+          </h2>
+          <p class="mt-6 text-base sm:text-lg leading-relaxed text-white/70">
+            Soy <span class="text-white font-medium">diseñador frontend y de IA independiente</span> con
+            <span class="text-violet-300 font-medium">un año de experiencia</span> concentrada en proyectos reales.
+            Construyo <span class="text-white font-medium">cualquier habitación</span> que tu idea necesite:
+            <span class="text-indigo-300">nodos</span>, <span class="text-sky-300">canvas</span>,
+            <span class="text-amber-200">JavaScript a medida</span>, o instalarte
+            <span class="text-emerald-300">n8n</span> paso a paso para que empieces con tu primera idea…
+            o con tu primer nodo.
+          </p>
+          <p class="mt-4 text-sm sm:text-base leading-relaxed text-white/45">
+            Y si entre tu idea y esa habitación hay una barrera —técnica, visual o de presupuesto—
+            <span class="text-white/80 font-medium">la rompo</span>. Sin drama, con vidrio y código.
+          </p>
+
+          <blockquote class="mt-8 border-l-2 border-indigo-400/60 pl-5 text-sm italic text-white/55 leading-relaxed">
+            “Una buena interfaz no se mira: se habita. Y si la puerta está cerrada… se diseña otra entrada.”
+          </blockquote>
+
+          <div class="mt-8 flex flex-wrap gap-2">
+            <span class="chip">n8n · instalación & setup</span>
+            <span class="chip">Nodos a medida</span>
+            <span class="chip">Canvas 2D</span>
+            <span class="chip">JavaScript</span>
+            <span class="chip">IA aplicada</span>
+            <span class="chip">UI Glassmorphism</span>
+            <span class="chip">Mentoring 1:1</span>
+          </div>
+
+          <div class="mt-10 flex flex-col sm:flex-row gap-4">
+            <a href="mailto:cuencibusiness@gmail.com?subject=Quiero%20empezar%20mi%20primera%20idea" class="btn-solid rounded-full px-8 py-3.5 text-sm font-semibold text-center">Cuéntame tu primera idea</a>
+            <a href="#trabajo" class="btn-glass rounded-full px-8 py-3.5 text-sm font-semibold text-center">Ver las habitaciones</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contacto" class="relative max-w-6xl mx-auto px-6 pb-14 scroll-mt-28">
+      <div class="select-none pointer-events-none overflow-hidden mb-6" aria-hidden="true">
+        <p class="wordmark-ghost font-display font-bold text-center leading-none" style="font-size:17vw; letter-spacing:0.06em;">CUENCI</p>
+      </div>
+      <div class="reveal glass-card card-sheen p-8 sm:p-14 text-center relative overflow-hidden" data-reveal>
+        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[36rem] h-48 rounded-full pointer-events-none" style="background:radial-gradient(ellipse at center, rgba(99,102,241,0.14), transparent 70%); filter:blur(30px);" aria-hidden="true"></div>
+        <p class="font-display text-xs tracking-[0.32em] uppercase text-neon/80 mb-3 relative">03 · Contacto</p>
+        <h2 class="reveal-clip font-display text-3xl sm:text-5xl font-bold text-white tracking-tight relative">¿Construimos algo <span class="text-gradient-hero">extraordinario</span>?</h2>
+        <p class="mt-4 text-white/50 text-sm sm:text-base max-w-md mx-auto relative">Abierto a proyectos freelance, colaboraciones creativas y oportunidades a tiempo completo. Barreras: ninguna.</p>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 relative">
+          <a href="mailto:hola@cuenci.dev" class="btn-solid rounded-full px-8 py-3.5 text-sm font-semibold inline-flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 7l10 6L22 7"/></svg>
+            cuencibusiness@gmail.com
+          </a>
+          <div class="flex items-center gap-3">
+             <a href="https://github.com/cuencibusiness-ai" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.17c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.7 5.39-5.27 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.2.67.8.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg></a>
+            <a href="#" class="social-btn" aria-label="LinkedIn"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg></a>
+            <a href="https://x.com/cuenci" target="_blank" rel="noopener noreferrer" class="social-btn" aria-label="X / Twitter"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.47l8.6-9.83L0 1.15h7.59l5.24 6.93 6.07-6.93zm-1.29 19.5h2.04L6.49 3.24H4.3l13.31 17.41z"/></svg></a>
+            <a href="#" class="social-btn" aria-label="Dribbble"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm7.94 5.53a10.2 10.2 0 0 1 2.3 6.36c-.34-.07-3.7-.75-7.09-.32-.07-.17-.14-.34-.22-.52-.21-.5-.44-1-.68-1.49 3.75-1.53 5.45-3.72 5.69-4.03zM12 1.77c2.6 0 4.98.98 6.78 2.57-.2.29-1.73 2.34-5.35 3.7A52.2 52.2 0 0 0 9.6 2.06c.77-.19 1.57-.29 2.4-.29zM7.63 2.7a63.3 63.3 0 0 1 3.8 5.9A41.63 41.63 0 0 1 1.94 9.98 10.27 10.27 0 0 1 7.63 2.7zM1.75 12.01v-.31c.36.01 4.94.07 10.1-1.47.29.57.57 1.15.82 1.73l-.4.12c-5.32 1.72-8.14 6.4-8.38 6.79a10.2 10.2 0 0 1-2.14-6.86zm10.25 10.2c-2.35 0-4.51-.8-6.22-2.14.19-.39 2.3-4.44 8.14-6.48l.07-.02a42.3 42.3 0 0 1 2.17 7.71 10.13 10.13 0 0 1-4.16.93zm5.88-1.8a43.9 43.9 0 0 0-1.98-7.32c3.2-.51 6 .33 6.35.44a10.28 10.28 0 0 1-4.37 6.88z"/></svg></a>
+          </div>
+        </div>
+      </div>
+      <div class="reveal mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/35 px-2" data-reveal style="animation-delay:0.1s;">
+        <p class="font-display tracking-[0.22em] font-bold text-gradient-silver">CUENCI</p>
+        <p>Diseñado y desarrollado por Eliezer · © <span id="year">2026</span></p>
+        <p class="flex items-center gap-1.5">Hecho con <span class="text-neon">◆</span> vidrio líquido, neuronas y enjambres</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Volver arriba -->
+  <button id="toTop" class="icon-round" aria-label="Volver arriba">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5m0 0l-6 6m6-6l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <!-- ROOM OVERLAY -->
+  <div id="roomOverlay" class="fixed inset-0 z-[100] hidden" role="dialog" aria-modal="true" aria-label="Habitación del proyecto">
+    <div class="room-backdrop" id="roomBackdrop" data-close-room></div>
+    <div class="relative z-10 h-full flex flex-col">
+      <header class="flex items-center justify-between px-5 sm:px-10 py-5 shrink-0 border-b border-white/[0.06]">
+        <div class="flex items-center gap-4 min-w-0">
+          <span class="tier-badge shrink-0 !border-indigo-300/25" id="roomCounter">ROOM 01 / 05</span>
+          <h2 class="font-display text-lg sm:text-2xl font-bold text-white truncate" id="roomTitle">—</h2>
+        </div>
+        <div class="flex items-center gap-2.5 shrink-0">
+          <button class="icon-round" id="roomPrev" aria-label="Habitación anterior">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5m0 0l6-6m-6 6l6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-round" id="roomNext" aria-label="Habitación siguiente">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="icon-round !border-rose-300/30 hover:!bg-rose-400/15" id="roomClose" aria-label="Cerrar habitación">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto px-5 sm:px-10 py-8" id="roomScroll">
+
+        <!-- ROOM: NEURAL -->
+        <section class="room-panel hidden max-w-5xl mx-auto" data-room-panel="neural">
+          <div class="glass-card !rounded-[2rem] overflow-hidden relative">
+            <div class="room-ambient" style="background:radial-gradient(55% 60% at 20% 0%, rgba(79,70,229,0.16), transparent 60%), radial-gradient(45% 55% at 90% 100%, rgba(34,211,238,0.1), transparent 60%);"></div>
+            <div class="relative art-neural p-6 sm:p-10 stagger-kids">
+              <div class="mb-6">
+                <p class="font-display text-xs tracking-[0.3em] uppercase text-cyan-300/70 mb-2 flex items-center gap-2">
+                  <span class="status-dot" style="width:6px;height:6px;"></span> Inferencia en vivo
+                </p>
+                <h3 class="font-display text-3xl sm:text-4xl font-bold text-white">Visualizador de Redes Neuronales en Tiempo Real</h3>
+                <p class="mt-3 max-w-xl text-white/50 text-sm leading-relaxed">Observa cómo las señales viajan en cascada a través de las capas: cada punto de luz es un pulso de activación, cada línea un peso sináptico.</p>
+              </div>
+              <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-5 max-w-md">
+                <div class="glass-mini stat-tile"><p class="font-display text-xl font-bold text-white tabular-nums" id="nnEpoch">1</p><p class="text-[0.6rem] uppercase tracking-[0.16em] text-white/40 mt-1">Época</p></div>
+                <div class="glass-mini stat-tile"><p class="font-display text-xl font-bold text-white tabular-nums" id="nnLoss">1.872</p><p class="text-[0.6rem] uppercase tracking-[0.16em] text-white/40 mt-1">Loss</p></div>
+                <div class="glass-mini stat-tile"><p class="font-display text-xl font-bold text-white tabular-nums" id="nnAcc">41.2%</p><p class="text-[0.6rem] uppercase tracking-[0.16em] text-white/40 mt-1">Precisión</p></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5 mb-5">
+                <button class="tool-btn active-tool" id="nnPlay">⏸ Pausar</button>
+                <button class="tool-btn" id="nnPulse">⚡ Enviar pulso</button>
+                <button class="tool-btn" id="nnReweight">↻ Reiniciar pesos</button>
+                <label class="slider-label ml-auto">Velocidad
+                  <input type="range" min="25" max="250" value="100" class="vol-slider w-28" id="nnSpeed" aria-label="Velocidad de la simulación" />
+                </label>
+              </div>
+              <div class="canvas-shell" style="height:clamp(320px, 48vh, 460px); background:linear-gradient(180deg, rgba(4,5,14,0.92), rgba(8,9,24,0.94));">
+                <canvas id="neuralCanvas"></canvas>
+                <div class="absolute bottom-3 left-4 text-[0.62rem] uppercase tracking-[0.16em] text-white/30 pointer-events-none">Red feed-forward · 4 → 6 → 6 → 3</div>
+              </div>
+              <div class="mt-6 flex flex-wrap gap-2">
+                <span class="chip">Canvas 2D</span><span class="chip">Señales en cascada</span><span class="chip">60 FPS</span><span class="chip">Simulación de inferencia</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROOM: SWARM -->
+        <section class="room-panel hidden max-w-5xl mx-auto" data-room-panel="swarm">
+          <div class="glass-card !rounded-[2rem] overflow-hidden relative">
+            <div class="room-ambient" style="background:radial-gradient(55% 60% at 80% 0%, rgba(34,211,238,0.14), transparent 60%), radial-gradient(45% 55% at 10% 100%, rgba(139,92,246,0.14), transparent 60%);"></div>
+            <div class="relative art-swarm p-6 sm:p-10 stagger-kids">
+              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                  <p class="font-display text-xs tracking-[0.3em] uppercase text-cyan-300/70 mb-2 flex items-center gap-2">
+                    <span class="status-dot" style="width:6px;height:6px;"></span> Comportamiento emergente
+                  </p>
+                  <h3 class="font-display text-3xl sm:text-4xl font-bold text-white">Autonomous Agent Swarm Simulation</h3>
+                  <p class="mt-3 max-w-xl text-white/50 text-sm leading-relaxed">Cientos de agentes con reglas locales (cohesión, alineación, separación) que producen inteligencia colectiva sin ningún líder. Mueve el ratón como depredador y observa cómo el enjambre se reorganiza.</p>
+                </div>
+                <p class="tier-badge shrink-0" id="swCount">0 agentes</p>
+              </div>
+              <div class="grid grid-cols-3 gap-3 sm:gap-4 mb-5 max-w-md">
+                <div class="glass-mini stat-tile"><p class="font-display text-xl font-bold text-white tabular-nums" id="swFps">60</p><p class="text-[0.6rem] uppercase tracking-[0.16em] text-white/40 mt-1">FPS</p></div>
+                <div class="glass-mini stat-tile"><p class="font-display text-xl font-bold text-white tabular-nums" id="swSpeed">0.0</p><p class="text-[0.6rem] uppercase tracking-[0.16em] text-white/40 mt-1">Vel. media</p></div>
+                <div class="glass-mini stat-tile"><p class="font-display text-xl font-bold text-white tabular-nums" id="swFlocks">0</p><p class="text-[0.6rem] uppercase tracking-[0.16em] text-white/40 mt-1">Grupos</p></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5 mb-4">
+                <button class="tool-btn active-tool" id="swPlay">⏸ Pausar</button>
+                <button class="tool-btn active-tool" id="swPredator">🐾 Depredador: ON</button>
+                <button class="tool-btn active-tool" id="swTrails">✦ Estelas: ON</button>
+                <button class="tool-btn" id="swScatter">〰 Dispersar</button>
+                <button class="tool-btn" id="swReset">↺ Reiniciar</button>
+              </div>
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
+                <label class="slider-label">Población · <span id="swPopVal">140</span>
+                  <input type="range" min="20" max="260" value="140" class="vol-slider w-full" id="swPop" aria-label="Población de agentes" />
+                </label>
+                <label class="slider-label">Cohesión · <span id="swCohVal">0.7</span>
+                  <input type="range" min="0" max="200" value="70" class="vol-slider w-full" id="swCoh" aria-label="Cohesión" />
+                </label>
+                <label class="slider-label">Alineación · <span id="swAliVal">0.9</span>
+                  <input type="range" min="0" max="200" value="90" class="vol-slider w-full" id="swAli" aria-label="Alineación" />
+                </label>
+                <label class="slider-label">Separación · <span id="swSepVal">1.3</span>
+                  <input type="range" min="0" max="250" value="130" class="vol-slider w-full" id="swSep" aria-label="Separación" />
+                </label>
+              </div>
+              <div class="canvas-shell" style="height:clamp(340px, 52vh, 520px); background:linear-gradient(180deg, rgba(3,7,14,0.92), rgba(6,12,24,0.94));">
+                <canvas id="swarmCanvas"></canvas>
+                <div class="absolute bottom-3 left-4 text-[0.62rem] uppercase tracking-[0.16em] text-white/30 pointer-events-none">Ratón = depredador · Clic = onda de pánico</div>
+              </div>
+              <div class="mt-6 flex flex-wrap gap-2">
+                <span class="chip">Boids</span><span class="chip">Sistemas emergentes</span><span class="chip">Canvas 2D</span><span class="chip">Vida artificial</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROOM: PRISMA -->
+        <section class="room-panel hidden max-w-5xl mx-auto" data-room-panel="prisma">
+          <div class="glass-card !rounded-[2rem] overflow-hidden relative">
+            <div class="room-ambient" style="background:radial-gradient(50% 60% at 20% 0%, rgba(217,70,239,0.14), transparent 60%), radial-gradient(45% 55% at 90% 100%, rgba(99,102,241,0.14), transparent 60%);"></div>
+            <div class="relative art-lab p-6 sm:p-10 stagger-kids">
+              <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                <div>
+                  <p class="font-display text-xs tracking-[0.3em] uppercase text-fuchsia-300/70 mb-2">Laboratorio · Sandbox</p>
+                  <h3 class="font-display text-3xl sm:text-4xl font-bold text-white">Prisma Lab — Experimentador de físicas</h3>
+                  <p class="mt-3 max-w-xl text-white/50 text-sm leading-relaxed">Haz clic para crear cuerpos, arrástralos con el ratón y juega con la gravedad. Motor: Matter.js cargado bajo demanda.</p>
+                </div>
+                <p class="tier-badge shrink-0" id="prismaCount">0 cuerpos</p>
+              </div>
+              <div class="flex flex-wrap gap-2.5 mb-5">
+                <button class="tool-btn active-tool" id="pToolBall">● Esfera</button>
+                <button class="tool-btn" id="pToolBox">■ Caja</button>
+                <button class="tool-btn" id="pRain">✦ Lluvia</button>
+                <button class="tool-btn" id="pGravity">Gravedad: ON</button>
+                <button class="tool-btn" id="pShake">〰 Sacudir</button>
+                <button class="tool-btn" id="pReset">↺ Reiniciar</button>
+              </div>
+              <div class="canvas-shell" style="height:clamp(340px, 52vh, 520px); background:linear-gradient(180deg, rgba(7,5,18,0.9), rgba(12,9,30,0.92));">
+                <div class="absolute inset-0 grid-lines opacity-40 pointer-events-none"></div>
+                <canvas id="prismaCanvas"></canvas>
+                <div class="absolute bottom-3 left-4 text-[0.62rem] uppercase tracking-[0.16em] text-white/30 pointer-events-none">Clic = crear · Arrastrar = mover</div>
+              </div>
+              <div class="mt-6 flex flex-wrap gap-2">
+                <span class="chip">Matter.js</span><span class="chip">Canvas 2D</span><span class="chip">Mouse Constraint</span><span class="chip">60 FPS</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROOM: SKILLS -->
+        <section class="room-panel hidden max-w-5xl mx-auto" data-room-panel="skills">
+          <div class="glass-card !rounded-[2rem] overflow-hidden relative p-8 sm:p-12">
+            <div class="room-ambient" style="background:radial-gradient(45% 55% at 10% 5%, rgba(56,189,248,0.14), transparent 60%), radial-gradient(45% 55% at 95% 95%, rgba(52,211,153,0.1), transparent 60%);"></div>
+            <div class="relative stagger-kids">
+              <p class="font-display text-xs tracking-[0.3em] uppercase text-neon/80 mb-2">Sala de habilidades</p>
+              <h3 class="font-display text-3xl sm:text-4xl font-bold text-white">Arsenal técnico</h3>
+              <div class="grid lg:grid-cols-2 gap-10 mt-10">
+                <div class="space-y-6" id="roomSkillBars">
+                  <div>
+                    <div class="flex justify-between text-sm mb-2"><span class="text-white/80 font-medium">Frontend · React / TypeScript</span><span class="text-white/45">95%</span></div>
+                    <div class="skill-bar !h-1.5"><div class="skill-fill" data-width="95"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-sm mb-2"><span class="text-white/80 font-medium">UI / UX Design · Figma</span><span class="text-white/45">90%</span></div>
+                    <div class="skill-bar !h-1.5"><div class="skill-fill" data-width="90"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-sm mb-2"><span class="text-white/80 font-medium">IA · n8n, nodos & automatización</span><span class="text-white/45">88%</span></div>
+                    <div class="skill-bar !h-1.5"><div class="skill-fill" data-width="88"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-sm mb-2"><span class="text-white/80 font-medium">Motion & WebGL · Three.js / GSAP</span><span class="text-white/45">82%</span></div>
+                    <div class="skill-bar !h-1.5"><div class="skill-fill" data-width="82"></div></div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-sm mb-2"><span class="text-white/80 font-medium">Vida artificial · Boids / Matter.js</span><span class="text-white/45">78%</span></div>
+                    <div class="skill-bar !h-1.5"><div class="skill-fill" data-width="78"></div></div>
+                  </div>
+                </div>
+                <div>
+                  <p class="font-display text-xs tracking-[0.28em] uppercase text-white/40 mb-5">Proceso</p>
+                  <ol class="relative border-l border-white/10 ml-2 space-y-7">
+                    <li class="pl-6 relative"><span class="absolute -left-[7px] top-1 w-3.5 h-3.5 rounded-full bg-indigo-400 shadow-[0_0_12px_rgba(99,102,241,0.8)]"></span><p class="text-sm font-semibold text-white">01 · Descubrimiento</p><p class="text-xs text-white/45 mt-1 leading-relaxed">Entender el problema antes de dibujar una sola pantalla.</p></li>
+                    <li class="pl-6 relative"><span class="absolute -left-[7px] top-1 w-3.5 h-3.5 rounded-full bg-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.8)]"></span><p class="text-sm font-semibold text-white">02 · Diseño en vidrio</p><p class="text-xs text-white/45 mt-1 leading-relaxed">Sistemas oscuros: jerarquía construida con luz y profundidad.</p></li>
+                    <li class="pl-6 relative"><span class="absolute -left-[7px] top-1 w-3.5 h-3.5 rounded-full bg-violet-400 shadow-[0_0_12px_rgba(167,139,250,0.8)]"></span><p class="text-sm font-semibold text-white">03 · Desarrollo</p><p class="text-xs text-white/45 mt-1 leading-relaxed">Código limpio, curvas de animación premium y 60fps constantes.</p></li>
+                    <li class="pl-6 relative"><span class="absolute -left-[7px] top-1 w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"></span><p class="text-sm font-semibold text-white">04 · Pulido</p><p class="text-xs text-white/45 mt-1 leading-relaxed">Microinteracciones, accesibilidad y obsesión por el rendimiento.</p></li>
+                  </ol>
+                  <div class="mt-8 flex flex-wrap gap-2">
+                    <span class="chip">React</span><span class="chip">Next.js</span><span class="chip">TypeScript</span><span class="chip">Three.js</span><span class="chip">GSAP</span><span class="chip">Matter.js</span><span class="chip">n8n</span><span class="chip">Tailwind</span><span class="chip">Figma</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ROOM: ESTUDIO -->
+        <section class="room-panel hidden max-w-5xl mx-auto" data-room-panel="estudio">
+          <div class="glass-card !rounded-[2rem] overflow-hidden relative p-8 sm:p-14 text-center">
+            <div class="room-ambient" style="background:radial-gradient(50% 60% at 50% 0%, rgba(99,102,241,0.16), transparent 60%), radial-gradient(40% 50% at 20% 100%, rgba(236,72,153,0.09), transparent 60%);"></div>
+            <div class="relative stagger-kids">
+              <div class="mx-auto w-24 h-24 rounded-full mb-8 float-slow" style="background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.9), rgba(129,140,248,0.5) 45%, rgba(56,189,248,0.15) 75%); box-shadow:0 0 60px rgba(99,102,241,0.5);"></div>
+              <p class="font-display text-xs tracking-[0.3em] uppercase text-neon/80 mb-3">El Estudio</p>
+              <h3 class="font-display text-3xl sm:text-5xl font-bold text-white max-w-2xl mx-auto leading-tight">Construyo cualquier habitación… y <span class="text-gradient-hero">rompo barreras</span></h3>
+              <p class="mt-6 max-w-xl mx-auto text-white/50 text-sm sm:text-base leading-relaxed">Cuenci es mi estudio personal: glassmorphism, movimiento sutil y sistemas autónomos combinados para construir productos digitales que se sienten vivos. Si algo se interpone entre la idea y el resultado, eso cae primero.</p>
+              <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button class="btn-solid rounded-full px-8 py-3.5 text-sm font-semibold" id="estudioContact">Trabajemos juntos</button>
+                <button class="btn-glass rounded-full px-8 py-3.5 text-sm font-semibold" id="estudioSwarm">Ver el enjambre</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+'use strict';
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(pointer:fine)').matches;
+/* 0. VEIL */
+const veil = document.getElementById('veil');
+function liftVeil() { veil.classList.add('veil-out'); setTimeout(function () { veil.remove(); }, 900); }
+window.addEventListener('load', liftVeil, { once: true });
+setTimeout(function () { if (veil.isConnected) liftVeil(); }, 3000);
+/* 1. SPRITES */
+function makeGlowSprite(rgbCore, rgbHalo) {
+const c = document.createElement('canvas');
+c.width = c.height = 64;
+const g = c.getContext('2d');
+const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+grad.addColorStop(0, 'rgba(' + rgbCore + ',1)');
+grad.addColorStop(0.28, 'rgba(' + rgbCore + ',0.85)');
+grad.addColorStop(0.62, 'rgba(' + rgbHalo + ',0.25)');
+grad.addColorStop(1, 'rgba(' + rgbHalo + ',0)');
+g.fillStyle = grad;
+g.fillRect(0, 0, 64, 64);
+return c;
+}
+const STAR_SPRITE = makeGlowSprite('255,255,255', '190,200,255');
+const PULSE_SPRITES = {
+'#818cf8': makeGlowSprite('255,255,255', '129,140,248'),
+'#38bdf8': makeGlowSprite('255,255,255', '56,189,248'),
+'#a78bfa': makeGlowSprite('255,255,255', '167,139,250'),
+'#e879f9': makeGlowSprite('255,255,255', '232,121,249')
+};
+const BODY_SPRITES = {};
+['#818cf8','#38bdf8','#a78bfa','#f472b6','#34d399','#fbbf24'].forEach(function (hex) {
+const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+BODY_SPRITES[hex] = makeGlowSprite(r + ',' + g + ',' + b, r + ',' + g + ',' + b);
+});
+/* 2. MASTER LOOP */
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+const cursorGlow = document.getElementById('cursorGlow');
+const scrollProgress = document.getElementById('scrollProgress');
+const toTopBtn = document.getElementById('toTop');
+let starW = 0, starH = 0, starDpr = 1, stars = [];
+let meteors = [];
+let nextMeteorAt = performance.now() + 6000 + Math.random() * 8000;
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+const glowPos = { x: innerWidth / 2, y: innerHeight / 2, tx: innerWidth / 2, ty: innerHeight / 2, seen: false };
+let masterPaused = false;
+let toTopShown = false;
+function buildStars() {
+starDpr = Math.min(window.devicePixelRatio || 1, 1.75);
+starW = window.innerWidth; starH = window.innerHeight;
+canvas.width = Math.floor(starW * starDpr); canvas.height = Math.floor(starH * starDpr);
+canvas.style.width = starW + 'px'; canvas.style.height = starH + 'px';
+ctx.setTransform(starDpr, 0, 0, starDpr, 0, 0);
+const count = Math.min(finePointer ? 220 : 130, Math.floor((starW * starH) / 8200));
+stars = new Array(count);
+for (let i = 0; i < count; i++) {
+stars[i] = {
+x: Math.random() * starW, y: Math.random() * starH,
+r: 0.25 + Math.random() * 0.75,
+baseA: 0.12 + Math.random() * 0.5,
+tw: 0.004 + Math.random() * 0.012,
+ph: Math.random() * Math.PI * 2,
+vx: (Math.random() - 0.5) * 0.045,
+vy: -0.02 - Math.random() * 0.06,
+depth: 0.3 + Math.random() * 0.7
+};
+}
+}
+function masterLoop(tick) {
+requestAnimationFrame(masterLoop);
+if (document.hidden || masterPaused) return;
+ctx.clearRect(0, 0, starW, starH);
+mouse.x += (mouse.tx - mouse.x) * 0.035;
+mouse.y += (mouse.ty - mouse.y) * 0.035;
+for (let i = 0; i < stars.length; i++) {
+const s = stars[i];
+if (!reducedMotion) {
+s.x += s.vx; s.y += s.vy;
+if (s.y < -3) s.y = starH + 3;
+if (s.x < -3) s.x = starW + 3;
+if (s.x > starW + 3) s.x = -3;
+}
+const twinkle = reducedMotion ? 1 : (0.72 + 0.28 * Math.sin(tick * s.tw + s.ph));
+const px = s.x + mouse.x * 14 * s.depth;
+const py = s.y + mouse.y * 14 * s.depth;
+const size = s.r * 7;
+ctx.globalAlpha = s.baseA * twinkle;
+ctx.drawImage(STAR_SPRITE, px - size / 2, py - size / 2, size, size);
+if (s.r > 0.82) {
+const gs = s.r * 18;
+ctx.globalAlpha = s.baseA * twinkle * 0.16;
+ctx.drawImage(STAR_SPRITE, px - gs / 2, py - gs / 2, gs, gs);
+}
+}
+ctx.globalAlpha = 1;
+if (!reducedMotion) {
+if (tick > nextMeteorAt) {
+meteors.push({ x: starW * (0.15 + Math.random() * 0.7), y: -24, vx: -(3 + Math.random() * 3.2), vy: 2 + Math.random() * 2.2, life: 1 });
+nextMeteorAt = tick + 7000 + Math.random() * 10000;
+}
+for (let i = meteors.length - 1; i >= 0; i--) {
+const m = meteors[i];
+m.x += m.vx; m.y += m.vy; m.life -= 0.014;
+if (m.life <= 0 || m.y > starH + 40) { meteors.splice(i, 1); continue; }
+const tx = m.x - m.vx * 9, ty = m.y - m.vy * 9;
+const grad = ctx.createLinearGradient(m.x, m.y, tx, ty);
+grad.addColorStop(0, 'rgba(255,255,255,' + (0.75 * m.life).toFixed(3) + ')');
+grad.addColorStop(1, 'rgba(165,180,252,0)');
+ctx.strokeStyle = grad;
+ctx.lineWidth = 1.4;
+ctx.beginPath();
+ctx.moveTo(m.x, m.y);
+ctx.lineTo(tx, ty);
+ctx.stroke();
+}
+}
+if (finePointer && !reducedMotion && glowPos.seen) {
+glowPos.x += (glowPos.tx - glowPos.x) * 0.09;
+glowPos.y += (glowPos.ty - glowPos.y) * 0.09;
+cursorGlow.style.left = glowPos.x + 'px';
+cursorGlow.style.top = glowPos.y + 'px';
+}
+const sy = window.scrollY || 0;
+const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+scrollProgress.style.transform = 'scaleX(' + Math.min(1, sy / maxScroll).toFixed(4) + ')';
+const shouldShow = sy > 800;
+if (shouldShow !== toTopShown) {
+toTopShown = shouldShow;
+toTopBtn.classList.toggle('show', shouldShow);
+}
+}
+buildStars();
+requestAnimationFrame(masterLoop);
+let resizeTimer;
+window.addEventListener('resize', function () {
+clearTimeout(resizeTimer);
+resizeTimer = setTimeout(function () { buildStars(); initIndicator(); }, 160);
+}, { passive: true });
+window.addEventListener('mousemove', function (e) {
+mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
+mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
+glowPos.tx = e.clientX; glowPos.ty = e.clientY;
+if (!glowPos.seen) { glowPos.seen = true; cursorGlow.style.opacity = '1'; }
+}, { passive: true });
+toTopBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' }); });
+const bentoGridEl = document.getElementById('bentoGrid');
+bentoGridEl.addEventListener('mousemove', function (e) {
+const card = e.target.closest('.bento-item');
+if (!card) return;
+const rect = card.getBoundingClientRect();
+card.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%');
+card.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + '%');
+}, { passive: true });
+/* 3. MONOGRAMA E */
+const eStage = document.getElementById('eStage');
+const eTilt = document.getElementById('eTilt');
+if ('IntersectionObserver' in window) {
+const eio = new IntersectionObserver(function (entries) {
+entries.forEach(function (entry) {
+if (entry.isIntersecting) {
+setTimeout(function () { eStage.classList.add('e-visible'); }, 220);
+eio.unobserve(entry.target);
+}
+});
+}, { threshold: 0.35 });
+eio.observe(eStage);
+} else {
+eStage.classList.add('e-visible');
+}
+if (finePointer && !reducedMotion) {
+eTilt.addEventListener('pointermove', function (e) {
+const rect = eTilt.getBoundingClientRect();
+const px = (e.clientX - rect.left) / rect.width - 0.5;
+const py = (e.clientY - rect.top) / rect.height - 0.5;
+eTilt.style.transform = 'rotateY(' + (px * 12).toFixed(2) + 'deg) rotateX(' + (-py * 9).toFixed(2) + 'deg)';
+});
+eTilt.addEventListener('pointerleave', function () { eTilt.style.transform = ''; });
+}
+/* 4. TAB BAR */
+const tierBadge = document.getElementById('ggTierBadge');
+let supportsPaintProbe = false;
+try {
+supportsPaintProbe =
+CSS.supports('background', 'paint(gg-glass-probe)') &&
+CSS.supports('backdrop-filter', 'url(#gg-glass-probe)');
+} catch (err) { supportsPaintProbe = false; }
+tierBadge.textContent = supportsPaintProbe
+? '◆ Tier 1 · Refracción activa (Chromium)'
+: '◇ Tier 2 · Material fallback (blur + saturate)';
+const tabBar = document.getElementById('ggTabBar');
+const indicator = document.getElementById('ggIndicator');
+const tabs = Array.prototype.slice.call(tabBar.querySelectorAll('.gg-tab'));
+const bentoItems = Array.prototype.slice.call(bentoGridEl.querySelectorAll('.bento-item'));
+const emptyState = document.getElementById('emptyState');
+function moveIndicator(btn) {
+indicator.style.width = btn.offsetWidth + 'px';
+indicator.style.transform = 'translate(' + btn.offsetLeft + 'px, -50%)';
+}
+function applyFilter(filter) {
+let visibleCount = 0;
+bentoItems.forEach(function (item) {
+const cat = item.getAttribute('data-cat');
+const always = item.hasAttribute('data-always');
+const show = filter === 'all' || always || cat === filter;
+if (show) { item.classList.remove('filtered-out'); if (cat) visibleCount++; }
+else { item.classList.add('filtered-out'); }
+});
+emptyState.classList.toggle('hidden', visibleCount > 0 || filter === 'all');
+}
+tabs.forEach(function (tab) {
+tab.addEventListener('click', function () {
+tabs.forEach(function (t) { t.setAttribute('aria-selected', 'false'); });
+tab.setAttribute('aria-selected', 'true');
+moveIndicator(tab);
+applyFilter(tab.getAttribute('data-filter'));
+});
+tab.addEventListener('keydown', function (e) {
+const idx = tabs.indexOf(tab);
+let target = null;
+if (e.key === 'ArrowRight') target = tabs[(idx + 1) % tabs.length];
+if (e.key === 'ArrowLeft') target = tabs[(idx - 1 + tabs.length) % tabs.length];
+if (target) { e.preventDefault(); target.focus(); target.click(); }
+});
+});
+function initIndicator() {
+const active = tabBar.querySelector('[aria-selected="true"]');
+if (active) moveIndicator(active);
+}
+initIndicator();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(initIndicator);
+/* 5. REVEAL / SKILLS / CONTADORES / NAV */
+const revealEls = document.querySelectorAll('[data-reveal]');
+if ('IntersectionObserver' in window) {
+const io = new IntersectionObserver(function (entries) {
+entries.forEach(function (entry) {
+if (entry.isIntersecting) { entry.target.classList.add('is-visible'); io.unobserve(entry.target); }
+});
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(function (el) { io.observe(el); });
+} else {
+revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+}
+function animateSkillBars(container) {
+container.querySelectorAll('.skill-fill').forEach(function (fill, i) {
+setTimeout(function () { fill.style.width = fill.getAttribute('data-width') + '%'; }, 120 + i * 120);
+});
+}
+const skillSection = document.getElementById('habilidades');
+if (skillSection && 'IntersectionObserver' in window) {
+const sio = new IntersectionObserver(function (entries) {
+entries.forEach(function (entry) {
+if (entry.isIntersecting) { animateSkillBars(entry.target); sio.unobserve(entry.target); }
+});
+}, { threshold: 0.3 });
+sio.observe(skillSection);
+}
+document.querySelectorAll('[data-count]').forEach(function (el) {
+const target = parseInt(el.getAttribute('data-count'), 10);
+const suffix = el.getAttribute('data-suffix') || '';
+if (reducedMotion) { el.textContent = target + suffix; return; }
+const startTime = performance.now();
+function countTick(now) {
+const p = Math.min((now - startTime) / 1600, 1);
+el.textContent = Math.round(target * (1 - Math.pow(1 - p, 4))) + suffix;
+if (p < 1) requestAnimationFrame(countTick);
+}
+setTimeout(function () { requestAnimationFrame(countTick); }, 900);
+});
+const navLinks = document.querySelectorAll('[data-nav]');
+['inicio', 'trabajo', 'sobre-mi', 'contacto'].forEach(function (id) {
+const sec = document.getElementById(id);
+if (sec && 'IntersectionObserver' in window) {
+new IntersectionObserver(function (entries) {
+entries.forEach(function (entry) {
+if (entry.isIntersecting) {
+navLinks.forEach(function (link) {
+link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+});
+}
+});
+}, { threshold: 0.25 }).observe(sec);
+}
+});
+document.getElementById('year').textContent = new Date().getFullYear();
+/* 6. SISTEMA DE ROOMS */
+const ROOMS = [
+{ id: 'neural',  title: 'Red Neuronal',     kind: 'Visualizador en tiempo real' },
+{ id: 'swarm',   title: 'Swarm Intelligence', kind: 'Agentes autónomos' },
+{ id: 'prisma',  title: 'Prisma Lab',       kind: 'Laboratorio de físicas' },
+{ id: 'skills',  title: 'Habilidades',      kind: 'Arsenal técnico' },
+{ id: 'estudio', title: 'Estudio Cuenci',   kind: 'Manifiesto' }
+];
+const overlay = document.getElementById('roomOverlay');
+const roomTitle = document.getElementById('roomTitle');
+const roomCounter = document.getElementById('roomCounter');
+const roomScroll = document.getElementById('roomScroll');
+let currentRoomIdx = -1;
+let lastFocused = null;
+function showPanel(id) {
+document.querySelectorAll('[data-room-panel]').forEach(function (panel) {
+panel.classList.toggle('hidden', panel.getAttribute('data-room-panel') !== id);
+});
+}
+function teardownAllRooms() { stopNeural(); stopSwarm(); stopPrisma(); }
+function openRoom(id) {
+const idx = ROOMS.findIndex(function (r) { return r.id === id; });
+if (idx < 0) return;
+const firstOpen = overlay.classList.contains('hidden');
+currentRoomIdx = idx;
+const room = ROOMS[idx];
+if (firstOpen) {
+lastFocused = document.activeElement;
+overlay.classList.remove('hidden');
+document.body.classList.add('room-open');
+masterPaused = true;
+requestAnimationFrame(function () { requestAnimationFrame(function () { overlay.classList.add('open'); }); });
+}
+showPanel(room.id);
+roomTitle.textContent = room.title + ' — ' + room.kind;
+roomCounter.textContent = 'ROOM ' + String(idx + 1).padStart(2, '0') + ' / ' + String(ROOMS.length).padStart(2, '0');
+roomScroll.scrollTop = 0;
+teardownAllRooms();
+if (room.id === 'neural') setTimeout(initNeural, 90);
+if (room.id === 'swarm') setTimeout(initSwarm, 90);
+if (room.id === 'prisma') setTimeout(initPrisma, 90);
+if (room.id === 'skills') {
+const bars = document.getElementById('roomSkillBars');
+bars.querySelectorAll('.skill-fill').forEach(function (f) { f.style.width = '0%'; });
+setTimeout(function () { animateSkillBars(bars); }, 180);
+}
+document.getElementById('roomClose').focus({ preventScroll: true });
+}
+function closeRoom() {
+if (overlay.classList.contains('hidden')) return;
+overlay.classList.remove('open');
+teardownAllRooms();
+setTimeout(function () {
+overlay.classList.add('hidden');
+document.body.classList.remove('room-open');
+masterPaused = false;
+showPanel('__none__');
+currentRoomIdx = -1;
+if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
+}, 520);
+}
+document.getElementById('roomClose').addEventListener('click', closeRoom);
+document.getElementById('roomBackdrop').addEventListener('click', closeRoom);
+document.getElementById('roomPrev').addEventListener('click', function () {
+if (currentRoomIdx < 0) return;
+openRoom(ROOMS[(currentRoomIdx - 1 + ROOMS.length) % ROOMS.length].id);
+});
+document.getElementById('roomNext').addEventListener('click', function () {
+if (currentRoomIdx < 0) return;
+openRoom(ROOMS[(currentRoomIdx + 1) % ROOMS.length].id);
+});
+document.addEventListener('keydown', function (e) {
+if (overlay.classList.contains('hidden')) return;
+if (e.key === 'Escape') closeRoom();
+if (e.key === 'ArrowRight') document.getElementById('roomNext').click();
+if (e.key === 'ArrowLeft') document.getElementById('roomPrev').click();
+});
+document.querySelectorAll('[data-room-open]').forEach(function (card) {
+card.addEventListener('click', function () {
+if (card.classList.contains('filtered-out')) return;
+openRoom(card.getAttribute('data-room-open'));
+});
+card.addEventListener('keydown', function (e) {
+if ((e.key === 'Enter' || e.key === ' ') && !card.classList.contains('filtered-out')) {
+e.preventDefault();
+openRoom(card.getAttribute('data-room-open'));
+}
+});
+});
+document.getElementById('estudioContact').addEventListener('click', function () {
+closeRoom();
+setTimeout(function () { document.getElementById('contacto').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' }); }, 560);
+});
+document.getElementById('estudioSwarm').addEventListener('click', function () { openRoom('swarm'); });
+/* 7. NEURAL */
+const neuralCanvas = document.getElementById('neuralCanvas');
+const nnEpochEl = document.getElementById('nnEpoch');
+const nnLossEl = document.getElementById('nnLoss');
+const nnAccEl = document.getElementById('nnAcc');
+let neural = null;
+function initNeural() {
+if (neural) return;
+const wrap = neuralCanvas.parentElement;
+const nDpr = Math.min(window.devicePixelRatio || 1, 2);
+const nW = wrap.clientWidth, nH = wrap.clientHeight;
+neuralCanvas.width = nW * nDpr; neuralCanvas.height = nH * nDpr;
+neuralCanvas.style.width = nW + 'px'; neuralCanvas.style.height = nH + 'px';
+const nCtx = neuralCanvas.getContext('2d');
+nCtx.setTransform(nDpr, 0, 0, nDpr, 0, 0);
+const layerSizes = [4, 6, 6, 3];
+const layerLabels = ['ENTRADA', 'OCULTA I', 'OCULTA II', 'SALIDA'];
+const padX = Math.max(56, nW * 0.1);
+const padTop = nH * 0.14, padBottom = nH * 0.2;
+const nodes = [];
+const layerNodes = [];
+layerSizes.forEach(function (size, li) {
+const lx = padX + (nW - 2 * padX) * (li / (layerSizes.length - 1));
+const group = [];
+for (let ni = 0; ni < size; ni++) {
+const ly = padTop + (nH - padTop - padBottom) * ((ni + 0.5) / size);
+const node = { x: lx, y: ly, act: 0.12, phase: Math.random() * Math.PI * 2, r: (li === 0 || li === layerSizes.length - 1) ? 10 : 7.5 };
+nodes.push(node); group.push(node);
+}
+layerNodes.push(group);
+});
+const edges = [];
+const outgoing = new Map();
+for (let li = 0; li < layerNodes.length - 1; li++) {
+layerNodes[li].forEach(function (nodeA) {
+layerNodes[li + 1].forEach(function (nodeB) {
+const edgeIdx = edges.length;
+edges.push({ a: nodeA, b: nodeB, w: Math.random() * 2 - 1, from: li });
+if (!outgoing.has(nodeA)) outgoing.set(nodeA, []);
+outgoing.get(nodeA).push(edgeIdx);
+});
+});
+}
+const pulses = [];
+const pulseKeys = ['#818cf8', '#38bdf8', '#a78bfa', '#e879f9'];
+let playing = true, speedFactor = 1, lastSpawnTime = 0;
+let epoch = 1, lossValue = 1.872, accValue = 41.2;
+function spawnPulseFrom(node) {
+const outs = outgoing.get(node);
+if (!outs || pulses.length >= 300) return;
+pulses.push({ edge: outs[Math.floor(Math.random() * outs.length)], t: 0, sp: 0.85 + Math.random() * 0.55 });
+}
+function cascade(node) {
+node.act = Math.min(1, node.act + 0.85);
+const outs = outgoing.get(node);
+if (!outs) return;
+const fanout = Math.random() < 0.5 ? 1 : 2;
+const shuffled = outs.slice().sort(function () { return Math.random() - 0.5; });
+for (let i = 0; i < Math.min(fanout, shuffled.length); i++) {
+if (pulses.length < 300) pulses.push({ edge: shuffled[i], t: 0, sp: 0.85 + Math.random() * 0.55 });
+}
+}
+const statsInterval = setInterval(function () {
+if (!playing) return;
+epoch++;
+lossValue = Math.max(0.021, lossValue * 0.93 + (Math.random() - 0.5) * 0.07);
+accValue = Math.min(98.9, accValue + (100 - accValue) * 0.055 + (Math.random() - 0.5) * 0.8);
+nnEpochEl.textContent = String(epoch);
+nnLossEl.textContent = lossValue.toFixed(3);
+nnAccEl.textContent = accValue.toFixed(1) + '%';
+}, 850);
+let prevTime = performance.now();
+function neuralLoop(now) {
+const dt = Math.min(now - prevTime, 50);
+prevTime = now;
+if (playing) {
+if (now - lastSpawnTime > 620 / speedFactor) {
+lastSpawnTime = now;
+const inputGroup = layerNodes[0];
+const burst = 1 + Math.floor(Math.random() * 2);
+for (let i = 0; i < burst; i++) spawnPulseFrom(inputGroup[Math.floor(Math.random() * inputGroup.length)]);
+}
+for (let i = pulses.length - 1; i >= 0; i--) {
+const pulse = pulses[i];
+pulse.t += (dt / 1000) * pulse.sp * speedFactor * 1.15;
+if (pulse.t >= 1) { cascade(edges[pulse.edge].b); pulses.splice(i, 1); }
+}
+const decay = 1 - 0.03 * (dt / 16.7);
+for (let i = 0; i < nodes.length; i++) {
+const node = nodes[i];
+const ambient = 0.1 + 0.08 * Math.sin(now * 0.0012 + node.phase);
+node.act = Math.max(node.act * decay, ambient);
+}
+}
+nCtx.clearRect(0, 0, nW, nH);
+for (let i = 0; i < edges.length; i++) {
+const edge = edges[i];
+nCtx.beginPath();
+nCtx.moveTo(edge.a.x, edge.a.y);
+nCtx.lineTo(edge.b.x, edge.b.y);
+nCtx.strokeStyle = 'rgba(148,163,255,' + (0.035 + Math.abs(edge.w) * 0.055).toFixed(3) + ')';
+nCtx.lineWidth = 0.6 + Math.abs(edge.w) * 0.7;
+nCtx.stroke();
+}
+for (let i = 0; i < pulses.length; i++) {
+const pulse = pulses[i];
+const edge = edges[pulse.edge];
+const px = edge.a.x + (edge.b.x - edge.a.x) * pulse.t;
+const py = edge.a.y + (edge.b.y - edge.a.y) * pulse.t;
+const sprite = PULSE_SPRITES[pulseKeys[edge.from % pulseKeys.length]];
+nCtx.drawImage(sprite, px - 8, py - 8, 16, 16);
+}
+for (let i = 0; i < nodes.length; i++) {
+const node = nodes[i];
+const act = node.act;
+const grad = nCtx.createRadialGradient(node.x - node.r * 0.3, node.y - node.r * 0.3, node.r * 0.1, node.x, node.y, node.r);
+grad.addColorStop(0, 'rgba(255,255,255,' + (0.35 + act * 0.6).toFixed(2) + ')');
+grad.addColorStop(0.5, 'rgba(129,140,248,' + (0.25 + act * 0.7).toFixed(2) + ')');
+grad.addColorStop(1, 'rgba(15,18,40,0.9)');
+nCtx.beginPath();
+nCtx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+nCtx.fillStyle = grad;
+nCtx.fill();
+nCtx.beginPath();
+nCtx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+nCtx.strokeStyle = 'rgba(199,210,254,' + (0.2 + act * 0.5).toFixed(2) + ')';
+nCtx.lineWidth = 1;
+nCtx.stroke();
+if (act > 0.45) {
+const gs = node.r * 4 * act;
+nCtx.globalAlpha = act * 0.5;
+nCtx.drawImage(PULSE_SPRITES['#818cf8'], node.x - gs / 2, node.y - gs / 2, gs, gs);
+nCtx.globalAlpha = 1;
+}
+}
+nCtx.font = '600 9px Inter, sans-serif';
+nCtx.textAlign = 'center';
+nCtx.fillStyle = 'rgba(255,255,255,0.32)';
+layerNodes.forEach(function (group, li) { nCtx.fillText(layerLabels[li], group[0].x, nH - 16); });
+neural.raf = requestAnimationFrame(neuralLoop);
+}
+neural = {
+raf: requestAnimationFrame(neuralLoop),
+statsInterval: statsInterval,
+api: {
+toggle: function () { playing = !playing; return playing; },
+burst: function () { layerNodes[0].forEach(spawnPulseFrom); nodes.forEach(function (n) { n.act = Math.min(1, n.act + 0.35); }); },
+reweight: function () { edges.forEach(function (edge) { edge.w = Math.random() * 2 - 1; }); nodes.forEach(function (n) { n.act = 1; }); },
+setSpeed: function (value) { speedFactor = value; }
+}
+};
+}
+function stopNeural() {
+if (!neural) return;
+cancelAnimationFrame(neural.raf);
+clearInterval(neural.statsInterval);
+neural = null;
+}
+document.getElementById('nnPlay').addEventListener('click', function () {
+if (!neural) return;
+const nowPlaying = neural.api.toggle();
+this.textContent = nowPlaying ? '⏸ Pausar' : '▶ Reanudar';
+this.classList.toggle('active-tool', nowPlaying);
+});
+document.getElementById('nnPulse').addEventListener('click', function () { if (neural) neural.api.burst(); });
+document.getElementById('nnReweight').addEventListener('click', function () { if (neural) neural.api.reweight(); });
+document.getElementById('nnSpeed').addEventListener('input', function () {
+if (neural) neural.api.setSpeed(parseInt(this.value, 10) / 100);
+});
+/* 8. SWARM */
+const swarmCanvas = document.getElementById('swarmCanvas');
+const swCountEl = document.getElementById('swCount');
+const swFpsEl = document.getElementById('swFps');
+const swSpeedEl = document.getElementById('swSpeed');
+const swFlocksEl = document.getElementById('swFlocks');
+let swarm = null;
+function initSwarm() {
+if (swarm) return;
+const wrap = swarmCanvas.parentElement;
+const sDpr = Math.min(window.devicePixelRatio || 1, 2);
+const sW = wrap.clientWidth, sH = wrap.clientHeight;
+swarmCanvas.width = sW * sDpr; swarmCanvas.height = sH * sDpr;
+swarmCanvas.style.width = sW + 'px'; swarmCanvas.style.height = sH + 'px';
+const sCtx = swarmCanvas.getContext('2d');
+sCtx.setTransform(sDpr, 0, 0, sDpr, 0, 0);
+const AGENT_COLORS = ['#38bdf8', '#818cf8', '#a78bfa', '#22d3ee', '#67e8f9'];
+const params = { population: 140, cohesion: 0.7, alignment: 0.9, separation: 1.3, perception: 62, sepDist: 26, maxSpeed: 2.7 };
+let playing = true, predatorOn = true, trailsOn = true;
+const pointer = { x: 0, y: 0, active: false };
+let agents = [];
+const CELL = 64;
+let gridCols = 0, gridRows = 0, gridHead = null, gridNext = null;
+function rebuildGridIndex() {
+const c = Math.max(1, Math.ceil(sW / CELL));
+const r = Math.max(1, Math.ceil(sH / CELL));
+if (!gridHead || gridCols !== c || gridRows !== r) { gridCols = c; gridRows = r; gridHead = new Int32Array(c * r); }
+if (!gridNext || gridNext.length < agents.length) gridNext = new Int32Array(agents.length + 64);
+gridHead.fill(-1);
+for (let i = 0; i < agents.length; i++) {
+const a = agents[i];
+let cx = (a.x / CELL) | 0; let cy = (a.y / CELL) | 0;
+if (cx < 0) cx = 0; if (cx >= gridCols) cx = gridCols - 1;
+if (cy < 0) cy = 0; if (cy >= gridRows) cy = gridRows - 1;
+const idx = cy * gridCols + cx;
+gridNext[i] = gridHead[idx];
+gridHead[idx] = i;
+a.cx = cx; a.cy = cy;
+}
+}
+function makeAgent() {
+const ang = Math.random() * Math.PI * 2;
+const sp = 1 + Math.random() * 1.6;
+return {
+x: Math.random() * sW, y: Math.random() * sH,
+vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+color: AGENT_COLORS[Math.floor(Math.random() * AGENT_COLORS.length)],
+panic: 0, hist: [], cx: 0, cy: 0
+};
+}
+function seedPopulation(n) { agents = []; for (let i = 0; i < n; i++) agents.push(makeAgent()); }
+seedPopulation(params.population);
+function setPopulation(n) {
+params.population = n;
+while (agents.length < n) agents.push(makeAgent());
+if (agents.length > n) agents.length = n;
+}
+swarmCanvas.addEventListener('pointermove', function (e) {
+const rect = swarmCanvas.getBoundingClientRect();
+pointer.x = e.clientX - rect.left; pointer.y = e.clientY - rect.top;
+pointer.active = true;
+}, { passive: true });
+swarmCanvas.addEventListener('pointerleave', function () { pointer.active = false; });
+swarmCanvas.addEventListener('pointerdown', function (e) {
+const rect = swarmCanvas.getBoundingClientRect();
+const cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+for (let i = 0; i < agents.length; i++) {
+const a = agents[i];
+const dx = a.x - cx, dy = a.y - cy;
+const d = Math.hypot(dx, dy) || 1;
+if (d < 190) {
+const force = (1 - d / 190) * 7;
+a.vx += (dx / d) * force; a.vy += (dy / d) * force;
+a.panic = 1;
+}
+}
+});
+function updateAgents(dtScale) {
+rebuildGridIndex();
+const percSq = params.perception * params.perception;
+const sepSq = params.sepDist * params.sepDist;
+const maxF = 0.22;
+for (let i = 0; i < agents.length; i++) {
+const a = agents[i];
+let cxSum = 0, cySum = 0, alX = 0, alY = 0, sepX = 0, sepY = 0, count = 0;
+const x0 = Math.max(0, a.cx - 1), x1 = Math.min(gridCols - 1, a.cx + 1);
+const y0 = Math.max(0, a.cy - 1), y1 = Math.min(gridRows - 1, a.cy + 1);
+for (let gy = y0; gy <= y1; gy++) {
+for (let gx = x0; gx <= x1; gx++) {
+let j = gridHead[gy * gridCols + gx];
+while (j !== -1) {
+if (j !== i) {
+const b = agents[j];
+const dx = b.x - a.x, dy = b.y - a.y;
+const dSq = dx * dx + dy * dy;
+if (dSq < percSq) {
+count++;
+cxSum += b.x; cySum += b.y;
+alX += b.vx; alY += b.vy;
+if (dSq < sepSq && dSq > 0.0001) {
+const d = Math.sqrt(dSq);
+sepX -= (dx / d) * (1 - d / params.sepDist);
+sepY -= (dy / d) * (1 - d / params.sepDist);
+}
+}
+}
+j = gridNext[j];
+}
+}
+}
+let fx = 0, fy = 0;
+if (count > 0) {
+fx += ((cxSum / count) - a.x) * 0.0045 * params.cohesion;
+fy += ((cySum / count) - a.y) * 0.0045 * params.cohesion;
+fx += ((alX / count) - a.vx) * 0.055 * params.alignment;
+fy += ((alY / count) - a.vy) * 0.055 * params.alignment;
+fx += sepX * 0.14 * params.separation;
+fy += sepY * 0.14 * params.separation;
+}
+if (predatorOn && pointer.active) {
+const pdx = a.x - pointer.x, pdy = a.y - pointer.y;
+const pd = Math.hypot(pdx, pdy);
+if (pd < 130 && pd > 0.001) {
+const strength = (1 - pd / 130) * 0.5;
+fx += (pdx / pd) * strength; fy += (pdy / pd) * strength;
+a.panic = Math.min(1, a.panic + 0.12);
+}
+}
+const fMag = Math.hypot(fx, fy);
+if (fMag > maxF) { fx = (fx / fMag) * maxF; fy = (fy / fMag) * maxF; }
+a.vx += fx * dtScale; a.vy += fy * dtScale;
+const sp = Math.hypot(a.vx, a.vy) || 0.0001;
+const maxNow = params.maxSpeed * (1 + a.panic * 0.9);
+if (sp > maxNow) { a.vx = (a.vx / sp) * maxNow; a.vy = (a.vy / sp) * maxNow; }
+else if (sp < 0.7) { a.vx = (a.vx / sp) * 0.7; a.vy = (a.vy / sp) * 0.7; }
+a.x += a.vx * dtScale; a.y += a.vy * dtScale;
+if (a.x < -8) a.x = sW + 8;
+if (a.x > sW + 8) a.x = -8;
+if (a.y < -8) a.y = sH + 8;
+if (a.y > sH + 8) a.y = -8;
+a.panic = Math.max(0, a.panic - 0.012 * dtScale);
+if (trailsOn) {
+a.hist.push(a.x, a.y);
+if (a.hist.length > 12) a.hist.splice(0, a.hist.length - 12);
+} else if (a.hist.length) a.hist.length = 0;
+}
+}
+function drawSwarm() {
+sCtx.clearRect(0, 0, sW, sH);
+if (agents.length <= 110) {
+const linkDist = 46, linkSq = linkDist * linkDist;
+let lines = 0;
+sCtx.lineWidth = 0.7;
+for (let i = 0; i < agents.length && lines < 320; i++) {
+const a = agents[i];
+const x0 = Math.max(0, a.cx - 1), x1 = Math.min(gridCols - 1, a.cx + 1);
+const y0 = Math.max(0, a.cy - 1), y1 = Math.min(gridRows - 1, a.cy + 1);
+for (let gy = y0; gy <= y1; gy++) {
+for (let gx = x0; gx <= x1; gx++) {
+let j = gridHead[gy * gridCols + gx];
+while (j !== -1) {
+if (j > i) {
+const b = agents[j];
+const dx = b.x - a.x, dy = b.y - a.y;
+const dSq = dx * dx + dy * dy;
+if (dSq < linkSq) {
+sCtx.strokeStyle = 'rgba(103,232,249,' + ((1 - Math.sqrt(dSq) / linkDist) * 0.14).toFixed(3) + ')';
+sCtx.beginPath(); sCtx.moveTo(a.x, a.y); sCtx.lineTo(b.x, b.y); sCtx.stroke();
+lines++;
+}
+}
+j = gridNext[j];
+}
+}
+}
+}
+}
+if (trailsOn) {
+sCtx.lineWidth = 1;
+for (let i = 0; i < agents.length; i++) {
+const a = agents[i];
+if (a.hist.length < 4) continue;
+sCtx.beginPath();
+sCtx.moveTo(a.hist[0], a.hist[1]);
+for (let h = 2; h < a.hist.length; h += 2) sCtx.lineTo(a.hist[h], a.hist[h + 1]);
+sCtx.strokeStyle = a.panic > 0.35 ? 'rgba(244,114,182,0.28)' : 'rgba(56,189,248,0.16)';
+sCtx.stroke();
+}
+}
+for (let i = 0; i < agents.length; i++) {
+const a = agents[i];
+const angle = Math.atan2(a.vy, a.vx);
+sCtx.save();
+sCtx.translate(a.x, a.y);
+sCtx.rotate(angle);
+sCtx.beginPath();
+sCtx.moveTo(6.5, 0);
+sCtx.lineTo(-4.5, 3.4);
+sCtx.lineTo(-2.2, 0);
+sCtx.lineTo(-4.5, -3.4);
+sCtx.closePath();
+sCtx.fillStyle = a.panic > 0.35 ? '#f9a8d4' : a.color;
+sCtx.fill();
+sCtx.restore();
+}
+if (predatorOn && pointer.active) {
+sCtx.save();
+sCtx.beginPath();
+sCtx.arc(pointer.x, pointer.y, 130, 0, Math.PI * 2);
+sCtx.strokeStyle = 'rgba(244,114,182,0.22)';
+sCtx.setLineDash([4, 8]);
+sCtx.lineWidth = 1;
+sCtx.stroke();
+sCtx.setLineDash([]);
+sCtx.beginPath();
+sCtx.arc(pointer.x, pointer.y, 4, 0, Math.PI * 2);
+sCtx.fillStyle = 'rgba(244,114,182,0.7)';
+sCtx.fill();
+sCtx.restore();
+}
+}
+let frames = 0;
+const statsInterval = setInterval(function () {
+swFpsEl.textContent = String(Math.min(60, frames * 2));
+frames = 0;
+let sum = 0;
+for (let i = 0; i < agents.length; i++) sum += Math.hypot(agents[i].vx, agents[i].vy);
+swSpeedEl.textContent = agents.length ? (sum / agents.length).toFixed(1) : '0.0';
+const visited = new Uint8Array(agents.length);
+let groups = 0;
+const linkSq = 70 * 70;
+for (let i = 0; i < agents.length; i++) {
+if (visited[i]) continue;
+groups++;
+const stack = [i];
+visited[i] = 1;
+while (stack.length) {
+const cur = stack.pop();
+const ca = agents[cur];
+for (let j = 0; j < agents.length; j++) {
+if (visited[j]) continue;
+const dx = agents[j].x - ca.x, dy = agents[j].y - ca.y;
+if (dx * dx + dy * dy < linkSq) { visited[j] = 1; stack.push(j); }
+}
+}
+}
+swFlocksEl.textContent = String(groups);
+swCountEl.textContent = agents.length + ' agentes';
+}, 500);
+let prevSwarmTime = performance.now();
+function swarmLoop(now) {
+const dt = Math.min(now - prevSwarmTime, 50);
+prevSwarmTime = now;
+frames++;
+if (playing) updateAgents(dt / 16.7);
+drawSwarm();
+swarm.raf = requestAnimationFrame(swarmLoop);
+}
+swarm = {
+raf: requestAnimationFrame(swarmLoop),
+statsInterval: statsInterval,
+api: {
+toggle: function () { playing = !playing; return playing; },
+setPredator: function (v) { predatorOn = v; },
+setTrails: function (v) { trailsOn = v; },
+setPopulation: setPopulation,
+setCohesion: function (v) { params.cohesion = v; },
+setAlignment: function (v) { params.alignment = v; },
+setSeparation: function (v) { params.separation = v; },
+scatter: function () {
+agents.forEach(function (a) {
+const ang = Math.random() * Math.PI * 2;
+const sp = params.maxSpeed * (1.2 + Math.random());
+a.vx = Math.cos(ang) * sp; a.vy = Math.sin(ang) * sp;
+a.panic = 1;
+});
+},
+reset: function () { seedPopulation(params.population); }
+}
+};
+}
+function stopSwarm() {
+if (!swarm) return;
+cancelAnimationFrame(swarm.raf);
+clearInterval(swarm.statsInterval);
+swarm = null;
+}
+document.getElementById('swPlay').addEventListener('click', function () {
+if (!swarm) return;
+const nowPlaying = swarm.api.toggle();
+this.textContent = nowPlaying ? '⏸ Pausar' : '▶ Reanudar';
+this.classList.toggle('active-tool', nowPlaying);
+});
+document.getElementById('swPredator').addEventListener('click', function () {
+if (!swarm) return;
+const on = this.classList.toggle('active-tool');
+swarm.api.setPredator(on);
+this.textContent = '🐾 Depredador: ' + (on ? 'ON' : 'OFF');
+});
+document.getElementById('swTrails').addEventListener('click', function () {
+if (!swarm) return;
+const on = this.classList.toggle('active-tool');
+swarm.api.setTrails(on);
+this.textContent = '✦ Estelas: ' + (on ? 'ON' : 'OFF');
+});
+document.getElementById('swScatter').addEventListener('click', function () { if (swarm) swarm.api.scatter(); });
+document.getElementById('swReset').addEventListener('click', function () { if (swarm) swarm.api.reset(); });
+document.getElementById('swPop').addEventListener('input', function () {
+document.getElementById('swPopVal').textContent = this.value;
+if (swarm) swarm.api.setPopulation(parseInt(this.value, 10));
+});
+document.getElementById('swCoh').addEventListener('input', function () {
+const v = parseInt(this.value, 10) / 100;
+document.getElementById('swCohVal').textContent = v.toFixed(1);
+if (swarm) swarm.api.setCohesion(v);
+});
+document.getElementById('swAli').addEventListener('input', function () {
+const v = parseInt(this.value, 10) / 100;
+document.getElementById('swAliVal').textContent = v.toFixed(1);
+if (swarm) swarm.api.setAlignment(v);
+});
+document.getElementById('swSep').addEventListener('input', function () {
+const v = parseInt(this.value, 10) / 100;
+document.getElementById('swSepVal').textContent = v.toFixed(1);
+if (swarm) swarm.api.setSeparation(v);
+});
+/* 9. PRISMA */
+const prismaCanvas = document.getElementById('prismaCanvas');
+const prismaCount = document.getElementById('prismaCount');
+const PALETTE = ['#818cf8', '#38bdf8', '#a78bfa', '#f472b6', '#34d399', '#fbbf24'];
+let prisma = null;
+let matterPromise = null;
+function loadMatter() {
+if (window.Matter) return Promise.resolve();
+if (!matterPromise) {
+matterPromise = new Promise(function (resolve, reject) {
+const s = document.createElement('script');
+s.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js';
+s.onload = resolve;
+s.onerror = function () { reject(new Error('matter-load-failed')); };
+document.head.appendChild(s);
+setTimeout(function () { if (!window.Matter) reject(new Error('matter-timeout')); }, 9000);
+});
+}
+return matterPromise;
+}
+function initPrisma() {
+if (prisma) return;
+prismaCount.textContent = 'Cargando motor…';
+loadMatter().then(function () {
+const panel = document.querySelector('[data-room-panel="prisma"]');
+if (!panel || panel.classList.contains('hidden')) return;
+buildPrisma();
+}).catch(function () {
+prismaCount.textContent = 'Motor no disponible';
+});
+}
+function buildPrisma() {
+if (prisma || typeof Matter === 'undefined') return;
+const wrap = prismaCanvas.parentElement;
+const pDpr = Math.min(window.devicePixelRatio || 1, 2);
+const pW = wrap.clientWidth, pH = wrap.clientHeight;
+prismaCanvas.width = pW * pDpr; prismaCanvas.height = pH * pDpr;
+prismaCanvas.style.width = pW + 'px'; prismaCanvas.style.height = pH + 'px';
+const pCtx = prismaCanvas.getContext('2d');
+pCtx.setTransform(pDpr, 0, 0, pDpr, 0, 0);
+const engine = Matter.Engine.create();
+engine.gravity.y = 1;
+const wallThick = 120;
+const walls = [
+Matter.Bodies.rectangle(pW / 2, pH + wallThick / 2, pW * 3, wallThick, { isStatic: true }),
+Matter.Bodies.rectangle(pW / 2, -wallThick / 2, pW * 3, wallThick, { isStatic: true }),
+Matter.Bodies.rectangle(-wallThick / 2, pH / 2, wallThick, pH * 3, { isStatic: true }),
+Matter.Bodies.rectangle(pW + wallThick / 2, pH / 2, wallThick, pH * 3, { isStatic: true })
+];
+Matter.Composite.add(engine.world, walls);
+const pMouse = Matter.Mouse.create(prismaCanvas);
+const mouseCon = Matter.MouseConstraint.create(engine, { mouse: pMouse, constraint: { stiffness: 0.22, render: { visible: false } } });
+Matter.Composite.add(engine.world, mouseCon);
+prisma = { engine: engine, w: pW, h: pH, raf: null, tool: 'ball', zeroG: false };
+for (let i = 0; i < 7; i++) {
+spawnPrismaBody(60 + Math.random() * (pW - 120), 40 + Math.random() * (pH * 0.4), Math.random() < 0.65 ? 'circle' : 'box');
+}
+let downPos = null;
+prismaCanvas.addEventListener('pointerdown', function (e) { downPos = { x: e.clientX, y: e.clientY }; });
+prismaCanvas.addEventListener('pointerup', function (e) {
+if (!downPos) return;
+const moved = Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y);
+downPos = null;
+if (moved < 6 && prisma) {
+const rect = prismaCanvas.getBoundingClientRect();
+spawnPrismaBody(e.clientX - rect.left, e.clientY - rect.top, prisma.tool);
+}
+});
+function prismaLoop() {
+Matter.Engine.update(engine, 1000 / 60);
+drawPrisma(pCtx, pW, pH, engine);
+prisma.raf = requestAnimationFrame(prismaLoop);
+}
+prisma.raf = requestAnimationFrame(prismaLoop);
+}
+function drawPrisma(pCtx, pW, pH, engine) {
+pCtx.clearRect(0, 0, pW, pH);
+const bodies = Matter.Composite.allBodies(engine.world);
+let dynCount = 0;
+for (let i = 0; i < bodies.length; i++) {
+const body = bodies[i];
+if (body.isStatic) continue;
+dynCount++;
+const color = body.plugin && body.plugin.pColor ? body.plugin.pColor : '#818cf8';
+if (body.circleRadius) {
+const rr = body.circleRadius;
+const sprite = BODY_SPRITES[color];
+if (sprite) {
+const gs = rr * 4.2;
+pCtx.globalAlpha = 0.55;
+pCtx.drawImage(sprite, body.position.x - gs / 2, body.position.y - gs / 2, gs, gs);
+pCtx.globalAlpha = 1;
+}
+pCtx.save();
+pCtx.translate(body.position.x, body.position.y);
+pCtx.rotate(body.angle);
+const grad = pCtx.createRadialGradient(-rr * 0.35, -rr * 0.35, rr * 0.1, 0, 0, rr);
+grad.addColorStop(0, 'rgba(255,255,255,0.85)');
+grad.addColorStop(0.35, color);
+grad.addColorStop(1, 'rgba(10,8,24,0.9)');
+pCtx.beginPath();
+pCtx.arc(0, 0, rr, 0, Math.PI * 2);
+pCtx.fillStyle = grad;
+pCtx.fill();
+pCtx.beginPath();
+pCtx.arc(0, 0, rr, 0, Math.PI * 2);
+pCtx.strokeStyle = 'rgba(255,255,255,0.28)';
+pCtx.lineWidth = 1;
+pCtx.stroke();
+pCtx.beginPath();
+pCtx.moveTo(0, 0); pCtx.lineTo(rr * 0.6, 0);
+pCtx.strokeStyle = 'rgba(255,255,255,0.22)';
+pCtx.stroke();
+pCtx.restore();
+} else {
+const verts = body.vertices;
+pCtx.save();
+pCtx.beginPath();
+pCtx.moveTo(verts[0].x, verts[0].y);
+for (let v = 1; v < verts.length; v++) pCtx.lineTo(verts[v].x, verts[v].y);
+pCtx.closePath();
+pCtx.fillStyle = 'rgba(255,255,255,0.05)';
+pCtx.fill();
+pCtx.strokeStyle = color;
+pCtx.lineWidth = 1.6;
+pCtx.stroke();
+pCtx.restore();
+}
+}
+prismaCount.textContent = dynCount + ' cuerpos';
+}
+function spawnPrismaBody(x, y, shape) {
+if (!prisma) return;
+const color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+let body;
+if (shape === 'box') {
+const size = 22 + Math.random() * 26;
+body = Matter.Bodies.rectangle(x, y, size, size, { restitution: 0.45, friction: 0.08, frictionAir: 0.008, angle: Math.random() * Math.PI });
+} else {
+const radius = 11 + Math.random() * 18;
+body = Matter.Bodies.circle(x, y, radius, { restitution: 0.72, friction: 0.05, frictionAir: 0.006 });
+}
+body.plugin = { pColor: color };
+Matter.Composite.add(prisma.engine.world, body);
+const allBodies = Matter.Composite.allBodies(prisma.engine.world);
+const dynamics = allBodies.filter(function (b) { return !b.isStatic; });
+while (dynamics.length > 70) Matter.Composite.remove(prisma.engine.world, dynamics.shift());
+}
+function stopPrisma() {
+if (!prisma) return;
+cancelAnimationFrame(prisma.raf);
+Matter.Composite.clear(prisma.engine.world, false);
+Matter.Engine.clear(prisma.engine);
+prisma = null;
+}
+const pToolBall = document.getElementById('pToolBall');
+const pToolBox = document.getElementById('pToolBox');
+pToolBall.addEventListener('click', function () {
+if (!prisma) return;
+prisma.tool = 'ball';
+pToolBall.classList.add('active-tool');
+pToolBox.classList.remove('active-tool');
+});
+pToolBox.addEventListener('click', function () {
+if (!prisma) return;
+prisma.tool = 'box';
+pToolBox.classList.add('active-tool');
+pToolBall.classList.remove('active-tool');
+});
+document.getElementById('pRain').addEventListener('click', function () {
+if (!prisma) return;
+for (let i = 0; i < 12; i++) {
+spawnPrismaBody(40 + Math.random() * (prisma.w - 80), -20 - Math.random() * 160, Math.random() < 0.7 ? 'circle' : 'box');
+}
+});
+document.getElementById('pGravity').addEventListener('click', function () {
+if (!prisma) return;
+prisma.zeroG = !prisma.zeroG;
+prisma.engine.gravity.y = prisma.zeroG ? 0 : 1;
+this.textContent = 'Gravedad: ' + (prisma.zeroG ? 'OFF' : 'ON');
+this.classList.toggle('active-tool', prisma.zeroG);
+if (prisma.zeroG) {
+Matter.Composite.allBodies(prisma.engine.world).forEach(function (b) {
+if (!b.isStatic) Matter.Body.setVelocity(b, { x: (Math.random() - 0.5) * 6, y: (Math.random() - 0.5) * 6 });
+});
+}
+});
+document.getElementById('pShake').addEventListener('click', function () {
+if (!prisma) return;
+Matter.Composite.allBodies(prisma.engine.world).forEach(function (b) {
+if (!b.isStatic) {
+Matter.Body.setVelocity(b, { x: b.velocity.x + (Math.random() - 0.5) * 22, y: b.velocity.y - 6 - Math.random() * 12 });
+Matter.Body.setAngularVelocity(b, (Math.random() - 0.5) * 0.4);
+}
+});
+});
+document.getElementById('pReset').addEventListener('click', function () {
+if (!prisma) return;
+Matter.Composite.allBodies(prisma.engine.world).forEach(function (b) {
+if (!b.isStatic) Matter.Composite.remove(prisma.engine.world, b);
+});
+});
+})();
+</script>
